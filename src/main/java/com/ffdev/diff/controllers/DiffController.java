@@ -18,14 +18,14 @@ public class DiffController {
     }
 
     @PostMapping("/{id}/left")
-    public ResponseEntity<Void> saveLeft(@PathVariable String id, @RequestBody byte[] data) {
+    public ResponseEntity<Void> saveLeft(@PathVariable String id, @RequestBody String data) {
         commandService.saveLeft(id, data);
 
         return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/{id}/right")
-    public ResponseEntity<Void> saveRight(@PathVariable String id, @RequestBody byte[] data) {
+    public ResponseEntity<Void> saveRight(@PathVariable String id, @RequestBody String data) {
         commandService.saveRight(id, data);
 
         return ResponseEntity.accepted().build();

@@ -14,9 +14,9 @@ public class PostDataProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
         return Stream.of(
-                arguments(generateRandom(), "{\"id\":123,\"message\":\"some json\"}".getBytes()),
-                arguments(generateRandom(), "some plain text".getBytes()),
-                arguments(generateRandom(), "<html><head></head><body><h1>some html</h1></body></html>".getBytes())
+                arguments(generateRandom(), "{\"id\":123,\"message\":\"some json\"}"),
+                arguments(generateRandom(), "some plain text"),
+                arguments(generateRandom(), "<html><head></head><body><h1>some html</h1></body></html>")
         );
     }
 

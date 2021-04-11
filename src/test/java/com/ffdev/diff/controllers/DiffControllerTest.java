@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = DiffController.class)
-@DisplayName("UT: Diff API")
+@DisplayName("Diff Controller")
 class DiffControllerTest {
 
     @MockBean
@@ -39,7 +39,7 @@ class DiffControllerTest {
         @ParameterizedTest
         @ArgumentsSource(PostDataProvider.class)
         @DisplayName("should accept post data for given ID")
-        public void shouldAccept(String id, byte[] data) throws Exception {
+        public void shouldAccept(String id, String data) throws Exception {
             mvc.perform(
                     post("/v1/diff/{id}/left", id).content(data)
             ).andExpect(status().isAccepted());
@@ -55,7 +55,7 @@ class DiffControllerTest {
         @ParameterizedTest
         @ArgumentsSource(PostDataProvider.class)
         @DisplayName("should accept post data for given ID")
-        public void shouldAccept(String id, byte[] data) throws Exception {
+        public void shouldAccept(String id, String data) throws Exception {
             mvc.perform(
                     post("/v1/diff/{id}/right", id).content(data)
             ).andExpect(status().isAccepted());
