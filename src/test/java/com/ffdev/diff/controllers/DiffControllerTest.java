@@ -2,35 +2,44 @@ package com.ffdev.diff.controllers;
 
 import com.ffdev.diff.helpers.PostDataProvider;
 import com.ffdev.diff.helpers.RandomIdProvider;
-import com.ffdev.diff.services.DiffCommandService;
-import com.ffdev.diff.services.DiffQueryService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.Set;
 
-@WebMvcTest(controllers = DiffController.class)
-@DisplayName("Diff Controller")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DisplayName("Diff API")
 class DiffControllerTest {
 
-    @MockBean
-    private DiffCommandService commandService;
-
-    @MockBean
-    private DiffQueryService queryService;
+    @LocalServerPort
+    private int port;
 
     @Autowired
-    private MockMvc mvc;
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @AfterEach
+    public void cleanup() {
+        Set<String> allKeys = redisTemplate.keys("*");
+        if (allKeys != null) {
+            redisTemplate.delete(allKeys);
+        }
+    }
 
     @Nested
     @DisplayName("when saving left")
@@ -39,12 +48,21 @@ class DiffControllerTest {
         @ParameterizedTest
         @ArgumentsSource(PostDataProvider.class)
         @DisplayName("should accept post data for given ID")
-        public void shouldAccept(String id, String data) throws Exception {
-            mvc.perform(
-                    post("/v1/diff/{id}/left", id).content(data)
-            ).andExpect(status().isAccepted());
+        public void shouldAccept(String id, String data) {
+            HttpEntity<String> body = new HttpEntity<>(data);
 
-            verify(commandService).saveLeft(eq(id), eq(data));
+            ResponseEntity<Void> response = restTemplate.postForEntity(
+                    "http://localhost:" + port + "/v1/diff/{id}/left",
+                    body,
+                    Void.class,
+                    id
+            );
+
+            assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+
+            String dataSaved = redisTemplate.opsForValue().get("diff:" + id + ":left");
+
+            assertEquals(data, dataSaved);
         }
     }
 
@@ -55,12 +73,21 @@ class DiffControllerTest {
         @ParameterizedTest
         @ArgumentsSource(PostDataProvider.class)
         @DisplayName("should accept post data for given ID")
-        public void shouldAccept(String id, String data) throws Exception {
-            mvc.perform(
-                    post("/v1/diff/{id}/right", id).content(data)
-            ).andExpect(status().isAccepted());
+        public void shouldAccept(String id, String data) {
+            HttpEntity<String> body = new HttpEntity<>(data);
 
-            verify(commandService).saveRight(eq(id), eq(data));
+            ResponseEntity<Void> response = restTemplate.postForEntity(
+                    "http://localhost:" + port + "/v1/diff/{id}/right",
+                    body,
+                    Void.class,
+                    id
+            );
+
+            assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+
+            String dataSaved = redisTemplate.opsForValue().get("diff:" + id + ":right");
+
+            assertEquals(data, dataSaved);
         }
     }
 
@@ -71,12 +98,15 @@ class DiffControllerTest {
         @ParameterizedTest
         @ArgumentsSource(RandomIdProvider.class)
         @DisplayName("should return diff data for given ID")
-        public void shouldReturnOk(String id) throws Exception {
-            mvc.perform(
-                    get("/v1/diff/{id}", id)
-            ).andExpect(status().isOk());
+        public void shouldReturnOk(String id) {
 
-            verify(queryService).getById(eq(id));
+            ResponseEntity<Void> response = restTemplate.getForEntity(
+                    "http://localhost:" + port + "/v1/diff/{id}",
+                    Void.class,
+                    id
+            );
+
+            assertEquals(HttpStatus.OK, response.getStatusCode());
         }
     }
 }
