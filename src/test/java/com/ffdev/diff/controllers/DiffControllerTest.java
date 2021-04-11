@@ -1,7 +1,9 @@
 package com.ffdev.diff.controllers;
 
 import com.ffdev.diff.helpers.PostDataProvider;
+import com.ffdev.diff.helpers.RandomIdProvider;
 import com.ffdev.diff.services.DiffCommandService;
+import com.ffdev.diff.services.DiffQueryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,6 +25,9 @@ class DiffControllerTest {
 
     @MockBean
     private DiffCommandService commandService;
+
+    @MockBean
+    private DiffQueryService queryService;
 
     @Autowired
     private MockMvc mvc;
@@ -55,6 +61,22 @@ class DiffControllerTest {
             ).andExpect(status().isAccepted());
 
             verify(commandService).saveRight(eq(id), eq(data));
+        }
+    }
+
+    @Nested
+    @DisplayName("when retrieving diff")
+    class GetDiff {
+
+        @ParameterizedTest
+        @ArgumentsSource(RandomIdProvider.class)
+        @DisplayName("should return diff data for given ID")
+        public void shouldReturnOk(String id) throws Exception {
+            mvc.perform(
+                    get("/v1/diff/{id}", id)
+            ).andExpect(status().isOk());
+
+            verify(queryService).getById(eq(id));
         }
     }
 }
