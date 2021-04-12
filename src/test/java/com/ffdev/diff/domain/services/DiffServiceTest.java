@@ -3,6 +3,7 @@ package com.ffdev.diff.domain.services;
 import com.ffdev.diff.domain.enums.DiffSide;
 import com.ffdev.diff.domain.exceptions.DiffSideNotFoundException;
 import com.ffdev.diff.domain.exceptions.InvalidBase64Exception;
+import com.ffdev.diff.domain.exceptions.InvalidJsonException;
 import com.ffdev.diff.domain.models.Diff;
 import com.ffdev.diff.domain.models.Difference;
 import com.ffdev.diff.domain.repositories.DiffSideRepository;
@@ -49,7 +50,7 @@ class DiffServiceTest {
         @DisplayName("should persist received data")
         public void shouldPersist() {
             String testId = "any-id";
-            String testData = "any-data";
+            String testData = "{\"id\":123,\"message\":\"any json\"}";
 
             service.saveLeft(testId, encodeB64(testData));
 
@@ -60,9 +61,20 @@ class DiffServiceTest {
         @DisplayName("should thrown error if data is not Base64")
         public void shouldThrowB64Exception() {
             String testId = "any-id";
-            String testData = "any-data";
+            String testData = "{\"id\":123,\"message\":\"any json\"}";
 
             assertThrows(InvalidBase64Exception.class, () -> service.saveLeft(testId, testData));
+
+            verifyNoInteractions(sideRepository);
+        }
+
+        @Test
+        @DisplayName("should thrown error if data is not JSON")
+        public void shouldThrowJSONException() {
+            String testId = "any-id";
+            String testData = "any-data";
+
+            assertThrows(InvalidJsonException.class, () -> service.saveLeft(testId, encodeB64(testData)));
 
             verifyNoInteractions(sideRepository);
         }
@@ -76,7 +88,7 @@ class DiffServiceTest {
         @DisplayName("should persist received data")
         public void shouldPersist() {
             String testId = "any-id";
-            String testData = "any-data";
+            String testData = "{\"id\":123,\"message\":\"any json\"}";
 
             service.saveRight(testId, encodeB64(testData));
 
@@ -87,9 +99,20 @@ class DiffServiceTest {
         @DisplayName("should thrown error if data is not Base64")
         public void shouldThrowB64Exception() {
             String testId = "any-id";
-            String testData = "any-data";
+            String testData = "{\"id\":123,\"message\":\"any json\"}";
 
             assertThrows(InvalidBase64Exception.class, () -> service.saveRight(testId, testData));
+
+            verifyNoInteractions(sideRepository);
+        }
+
+        @Test
+        @DisplayName("should thrown error if data is not JSON")
+        public void shouldThrowJSONException() {
+            String testId = "any-id";
+            String testData = "any-data";
+
+            assertThrows(InvalidJsonException.class, () -> service.saveRight(testId, encodeB64(testData)));
 
             verifyNoInteractions(sideRepository);
         }

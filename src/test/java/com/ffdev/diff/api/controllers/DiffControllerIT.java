@@ -76,6 +76,36 @@ class DiffControllerIT {
     }
 
     @Test
+    @DisplayName("should return 409 if left side is not JSON")
+    public void shouldReturn409IfLeftNotJSON() {
+        String testId = generateRandom();
+        String testData = "some-data";
+
+        ResponseEntity<ErrorDTO> response = postError(LEFT, testId, encodeB64(testData));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ErrorDTO error = response.getBody();
+        assertNotNull(error);
+        assertEquals(JSON_INVALID, error.code());
+        assertEquals("Invalid JSON data", error.message());
+    }
+
+    @Test
+    @DisplayName("should return 409 if right side is not JSON")
+    public void shouldReturn409IfRightNotJSON() {
+        String testId = generateRandom();
+        String testData = "some-data";
+
+        ResponseEntity<ErrorDTO> response = postError(RIGHT, testId, encodeB64(testData));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ErrorDTO error = response.getBody();
+        assertNotNull(error);
+        assertEquals(JSON_INVALID, error.code());
+        assertEquals("Invalid JSON data", error.message());
+    }
+
+    @Test
     @DisplayName("should return 404 if right side is missing")
     public void shouldReturn404IfNoRightSide() {
         String testId = generateRandom();
