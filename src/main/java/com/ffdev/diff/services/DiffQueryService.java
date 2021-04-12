@@ -3,7 +3,7 @@ package com.ffdev.diff.services;
 import com.ffdev.diff.domain.DiffPart;
 import com.ffdev.diff.dtos.DiffChangeDTO;
 import com.ffdev.diff.dtos.DiffResultDTO;
-import com.ffdev.diff.exceptions.DiffNotFoundException;
+import com.ffdev.diff.exceptions.DiffPartNotFoundException;
 import com.ffdev.diff.repositories.DiffPartRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -23,8 +23,8 @@ public class DiffQueryService {
     }
 
     public DiffResultDTO getById(@NotNull String id) {
-        String leftPart = repository.getById(DiffPart.LEFT, id).orElseThrow(DiffNotFoundException::new);
-        String rightPart = repository.getById(DiffPart.RIGHT, id).orElseThrow(DiffNotFoundException::new);
+        String leftPart = getPart(DiffPart.LEFT, id);
+        String rightPart = getPart(DiffPart.RIGHT, id);
 
         if (leftPart.length() != rightPart.length()) {
             return buildDifferentSizes();
@@ -32,6 +32,11 @@ public class DiffQueryService {
 
         List<DiffChangeDTO> changes = singletonList(new DiffChangeDTO("some-action", 0L, (long) leftPart.length()));
         return new DiffResultDTO("some-result-status", changes);
+    }
+
+    private String getPart(DiffPart part, String id) {
+        return repository.getById(part, id)
+                .orElseThrow(() -> new DiffPartNotFoundException(part));
     }
 
     private DiffResultDTO buildDifferentSizes() {

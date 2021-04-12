@@ -2,7 +2,7 @@ package com.ffdev.diff.services;
 
 import com.ffdev.diff.domain.DiffPart;
 import com.ffdev.diff.dtos.DiffResultDTO;
-import com.ffdev.diff.exceptions.DiffNotFoundException;
+import com.ffdev.diff.exceptions.DiffPartNotFoundException;
 import com.ffdev.diff.repositories.DiffPartRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -77,7 +77,7 @@ class DiffQueryServiceTest {
         when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
                 .thenReturn(Optional.of("some-data"));
 
-        assertThrows(DiffNotFoundException.class, () -> service.getById(testId));
+        assertThrows(DiffPartNotFoundException.class, () -> service.getById(testId));
     }
 
     @Test
@@ -91,6 +91,6 @@ class DiffQueryServiceTest {
         when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
                 .thenReturn(Optional.of("some-data"));
 
-        assertThrows(DiffNotFoundException.class, () -> service.getById(testId));
+        assertThrows(DiffPartNotFoundException.class, () -> service.getById(testId));
     }
 }
