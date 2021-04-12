@@ -2,7 +2,7 @@ package com.ffdev.diff.services;
 
 import com.ffdev.diff.domain.DiffPart;
 import com.ffdev.diff.helpers.PostDataProvider;
-import com.ffdev.diff.repositories.DiffWriteRepository;
+import com.ffdev.diff.repositories.DiffPartRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,7 +18,7 @@ import static org.mockito.MockitoAnnotations.openMocks;
 class DiffCommandServiceTest {
 
     @Mock
-    private DiffWriteRepository repository;
+    private DiffPartRepository repository;
 
     private DiffCommandService service;
 
@@ -39,7 +39,7 @@ class DiffCommandServiceTest {
         public void shouldPersist(String id, String data) {
             service.saveLeft(id, data);
 
-            verify(repository).savePart(eq(id), eq(data), eq(DiffPart.LEFT));
+            verify(repository).save(eq(DiffPart.LEFT), eq(id), eq(data));
         }
     }
 
@@ -53,7 +53,7 @@ class DiffCommandServiceTest {
         public void shouldPersist(String id, String data) {
             service.saveRight(id, data);
 
-            verify(repository).savePart(eq(id), eq(data), eq(DiffPart.RIGHT));
+            verify(repository).save(eq(DiffPart.RIGHT), eq(id), eq(data));
         }
     }
 }
