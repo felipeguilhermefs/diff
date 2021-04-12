@@ -1,9 +1,10 @@
 package com.ffdev.diff.services;
 
-import com.ffdev.diff.api.dtos.DiffResonseDTO;
+import com.ffdev.diff.domain.models.Diff;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.ffdev.diff.domain.enums.DiffResult.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -15,19 +16,19 @@ class DiffCheckServiceTest {
     @Test
     @DisplayName("should return equal result")
     public void shouldReturnEqual() {
-        DiffResonseDTO result = service.getDiff("some-data", "some-data");
+        Diff result = service.getDiff("some-data", "some-data");
 
-        assertEquals("EQUAL", result.result());
+        assertEquals(EQUAL, result.result());
         assertTrue(result.differences().isEmpty());
     }
 
     @Test
     @DisplayName("should return different sizes result")
     public void shouldReturnDifferentSizes() {
-        DiffResonseDTO result = service.getDiff("some-data", "other-data");
+        Diff result = service.getDiff("some-data", "other-data");
 
         // some-data (9 chars) != other-data (10 chars)
-        assertEquals("DIFFERENT_SIZES", result.result());
+        assertEquals(DIFFERENT_SIZES, result.result());
 
         // no differences are identified at the moment
         assertTrue(result.differences().isEmpty());
@@ -36,9 +37,9 @@ class DiffCheckServiceTest {
     @Test
     @DisplayName("should return differences at the start")
     public void shouldReturnChangesAtStart() {
-        DiffResonseDTO result = service.getDiff("some-data", "cene-data");
+        Diff result = service.getDiff("some-data", "cene-data");
 
-        assertEquals("DIFFERENT", result.result());
+        assertEquals(DIFFERENT, result.result());
 
         // some-data
         // |||
@@ -51,9 +52,9 @@ class DiffCheckServiceTest {
     @Test
     @DisplayName("should return differences at the end")
     public void shouldReturnChangesAtEnd() {
-        DiffResonseDTO result = service.getDiff("some-data", "some-yolo");
+        Diff result = service.getDiff("some-data", "some-yolo");
 
-        assertEquals("DIFFERENT", result.result());
+        assertEquals(DIFFERENT, result.result());
         // some-data
         //      ||||
         // some-yolo
@@ -65,9 +66,9 @@ class DiffCheckServiceTest {
     @Test
     @DisplayName("should return differences in the middle")
     public void shouldReturnChangesInMiddle() {
-        DiffResonseDTO result = service.getDiff("some-data", "solo:beta");
+        Diff result = service.getDiff("some-data", "solo:beta");
 
-        assertEquals("DIFFERENT", result.result());
+        assertEquals(DIFFERENT, result.result());
         // some-data
         //   |||||
         // solo:beta
@@ -79,9 +80,9 @@ class DiffCheckServiceTest {
     @Test
     @DisplayName("should return multiple differences")
     public void shouldReturnMultipleChanges() {
-        DiffResonseDTO result = service.getDiff("some-data", "iota-bela");
+        Diff result = service.getDiff("some-data", "iota-bela");
 
-        assertEquals("DIFFERENT", result.result());
+        assertEquals(DIFFERENT, result.result());
         // some-data
         // | || |||
         // iota-bela

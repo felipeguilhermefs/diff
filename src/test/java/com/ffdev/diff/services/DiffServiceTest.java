@@ -1,7 +1,8 @@
 package com.ffdev.diff.services;
 
 import com.ffdev.diff.domain.enums.DiffPart;
-import com.ffdev.diff.api.dtos.DiffResonseDTO;
+import com.ffdev.diff.domain.models.Diff;
+import com.ffdev.diff.domain.models.Difference;
 import com.ffdev.diff.exceptions.DiffPartNotFoundException;
 import com.ffdev.diff.repositories.DiffPartRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,8 @@ import org.mockito.Mock;
 
 import java.util.Optional;
 
-import static java.util.Collections.emptyList;
+import static com.ffdev.diff.domain.enums.DiffResult.EQUAL;
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
@@ -100,13 +102,13 @@ class DiffServiceTest {
             String testId = "any-id";
             String testData = "any-data";
 
-            DiffResonseDTO expectedResult = new DiffResonseDTO("EQUAL", emptyList());
+            Diff expectedDiff = new Diff(EQUAL, singletonList(new Difference(30L, 6L)));
             when(checkService.getDiff(eq(testData), eq(testData)))
-                    .thenReturn(expectedResult);
+                    .thenReturn(expectedDiff);
 
             withDiffPart(testId, testData, testData);
 
-            assertEquals(expectedResult, service.getById(testId));
+            assertEquals(expectedDiff, service.getById(testId));
         }
 
         private void withDiffPart(String id, String left, String right) {
