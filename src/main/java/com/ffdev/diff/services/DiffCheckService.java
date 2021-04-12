@@ -1,7 +1,7 @@
 package com.ffdev.diff.services;
 
-import com.ffdev.diff.dtos.DiffChangeDTO;
-import com.ffdev.diff.dtos.DiffResultDTO;
+import com.ffdev.diff.api.dtos.DifferenceDTO;
+import com.ffdev.diff.api.dtos.DiffResonseDTO;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -16,21 +16,21 @@ public class DiffCheckService {
     /**
      * getDiff linearly compares two strings and returns information of side-by-side differences
      */
-    public DiffResultDTO getDiff(@NotNull String left, @NotNull String right) {
+    public DiffResonseDTO getDiff(@NotNull String left, @NotNull String right) {
 
         if (left.length() != right.length()) {
-            return new DiffResultDTO("DIFFERENT_SIZES", emptyList());
+            return new DiffResonseDTO("DIFFERENT_SIZES", emptyList());
         }
 
         if (left.equals(right)) {
-            return new DiffResultDTO("EQUAL", emptyList());
+            return new DiffResonseDTO("EQUAL", emptyList());
         }
 
-        return new DiffResultDTO("DIFFERENT", getChanges(left, right));
+        return new DiffResonseDTO("DIFFERENT", getChanges(left, right));
     }
 
-    private List<DiffChangeDTO> getChanges(String left, String right) {
-        List<DiffChangeDTO> changes = new ArrayList<>();
+    private List<DifferenceDTO> getChanges(String left, String right) {
+        List<DifferenceDTO> changes = new ArrayList<>();
         long changeOffset = 0;
         boolean inChange = false;
 
@@ -47,13 +47,13 @@ public class DiffCheckService {
 
             boolean endsChange = !isDifferent && inChange;
             if (endsChange) {
-                changes.add(new DiffChangeDTO(changeOffset, offset - changeOffset));
+                changes.add(new DifferenceDTO(changeOffset, offset - changeOffset));
                 inChange = false;
             }
         }
 
         if (inChange) {
-            changes.add(new DiffChangeDTO(changeOffset, left.length() - changeOffset));
+            changes.add(new DifferenceDTO(changeOffset, left.length() - changeOffset));
         }
 
         return changes;

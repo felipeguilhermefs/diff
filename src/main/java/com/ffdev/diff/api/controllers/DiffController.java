@@ -1,6 +1,6 @@
-package com.ffdev.diff.controllers;
+package com.ffdev.diff.api.controllers;
 
-import com.ffdev.diff.dtos.DiffResultDTO;
+import com.ffdev.diff.api.dtos.DiffResonseDTO;
 import com.ffdev.diff.services.DiffService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +30,7 @@ public class DiffController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DiffResultDTO> getDiff(@PathVariable String id) {
+    public ResponseEntity<DiffResonseDTO> getDiff(@PathVariable String id) {
         return ResponseEntity.ok(service.getById(id));
     }
 }

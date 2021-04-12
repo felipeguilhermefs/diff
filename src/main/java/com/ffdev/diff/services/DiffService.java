@@ -1,7 +1,7 @@
 package com.ffdev.diff.services;
 
 import com.ffdev.diff.domain.DiffPart;
-import com.ffdev.diff.dtos.DiffResultDTO;
+import com.ffdev.diff.api.dtos.DiffResonseDTO;
 import com.ffdev.diff.exceptions.DiffPartNotFoundException;
 import com.ffdev.diff.repositories.DiffPartRepository;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class DiffService {
         repository.save(part, id, data);
     }
 
-    public DiffResultDTO getById(@NotNull String id) {
+    public DiffResonseDTO getById(@NotNull String id) {
         String left = getPart(DiffPart.LEFT, id);
         String right = getPart(DiffPart.RIGHT, id);
 

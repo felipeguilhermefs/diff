@@ -1,6 +1,6 @@
 package com.ffdev.diff.services;
 
-import com.ffdev.diff.dtos.DiffResultDTO;
+import com.ffdev.diff.api.dtos.DiffResonseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,82 +15,82 @@ class DiffCheckServiceTest {
     @Test
     @DisplayName("should return equal result")
     public void shouldReturnEqual() {
-        DiffResultDTO result = service.getDiff("some-data", "some-data");
+        DiffResonseDTO result = service.getDiff("some-data", "some-data");
 
-        assertEquals("EQUAL", result.status());
-        assertTrue(result.changes().isEmpty());
+        assertEquals("EQUAL", result.result());
+        assertTrue(result.differences().isEmpty());
     }
 
     @Test
     @DisplayName("should return different sizes result")
     public void shouldReturnDifferentSizes() {
-        DiffResultDTO result = service.getDiff("some-data", "other-data");
+        DiffResonseDTO result = service.getDiff("some-data", "other-data");
 
         // some-data (9 chars) != other-data (10 chars)
-        assertEquals("DIFFERENT_SIZES", result.status());
+        assertEquals("DIFFERENT_SIZES", result.result());
 
-        // no changes are identified at the moment
-        assertTrue(result.changes().isEmpty());
+        // no differences are identified at the moment
+        assertTrue(result.differences().isEmpty());
     }
 
     @Test
-    @DisplayName("should return changes at the start")
+    @DisplayName("should return differences at the start")
     public void shouldReturnChangesAtStart() {
-        DiffResultDTO result = service.getDiff("some-data", "cene-data");
+        DiffResonseDTO result = service.getDiff("some-data", "cene-data");
 
-        assertEquals("DIFFERENT", result.status());
+        assertEquals("DIFFERENT", result.result());
 
         // some-data
         // |||
         // cene-data
-        assertEquals(1, result.changes().size());
-        assertEquals(0L, result.changes().get(0).offset());
-        assertEquals(3L, result.changes().get(0).length());
+        assertEquals(1, result.differences().size());
+        assertEquals(0L, result.differences().get(0).offset());
+        assertEquals(3L, result.differences().get(0).length());
     }
 
     @Test
-    @DisplayName("should return changes at the end")
+    @DisplayName("should return differences at the end")
     public void shouldReturnChangesAtEnd() {
-        DiffResultDTO result = service.getDiff("some-data", "some-yolo");
+        DiffResonseDTO result = service.getDiff("some-data", "some-yolo");
 
-        assertEquals("DIFFERENT", result.status());
+        assertEquals("DIFFERENT", result.result());
         // some-data
         //      ||||
         // some-yolo
-        assertEquals(1, result.changes().size());
-        assertEquals(5L, result.changes().get(0).offset());
-        assertEquals(4L, result.changes().get(0).length());
+        assertEquals(1, result.differences().size());
+        assertEquals(5L, result.differences().get(0).offset());
+        assertEquals(4L, result.differences().get(0).length());
     }
 
     @Test
-    @DisplayName("should return changes in the middle")
+    @DisplayName("should return differences in the middle")
     public void shouldReturnChangesInMiddle() {
-        DiffResultDTO result = service.getDiff("some-data", "solo:beta");
+        DiffResonseDTO result = service.getDiff("some-data", "solo:beta");
 
-        assertEquals("DIFFERENT", result.status());
+        assertEquals("DIFFERENT", result.result());
         // some-data
         //   |||||
         // solo:beta
-        assertEquals(1, result.changes().size());
-        assertEquals(2L, result.changes().get(0).offset());
-        assertEquals(5L, result.changes().get(0).length());
+        assertEquals(1, result.differences().size());
+        assertEquals(2L, result.differences().get(0).offset());
+        assertEquals(5L, result.differences().get(0).length());
     }
 
     @Test
-    @DisplayName("should return multiple changes")
+    @DisplayName("should return multiple differences")
     public void shouldReturnMultipleChanges() {
-        DiffResultDTO result = service.getDiff("some-data", "iota-bela");
+        DiffResonseDTO result = service.getDiff("some-data", "iota-bela");
 
-        assertEquals("DIFFERENT", result.status());
+        assertEquals("DIFFERENT", result.result());
         // some-data
         // | || |||
         // iota-bela
-        assertEquals(3, result.changes().size());
-        assertEquals(0L, result.changes().get(0).offset());
-        assertEquals(1L, result.changes().get(0).length());
-        assertEquals(2L, result.changes().get(1).offset());
-        assertEquals(2L, result.changes().get(1).length());
-        assertEquals(5L, result.changes().get(2).offset());
-        assertEquals(3L, result.changes().get(2).length());
+        assertEquals(3, result.differences().size());
+        assertEquals(0L, result.differences().get(0).offset());
+        assertEquals(1L, result.differences().get(0).length());
+        assertEquals(2L, result.differences().get(1).offset());
+        assertEquals(2L, result.differences().get(1).length());
+        assertEquals(5L, result.differences().get(2).offset());
+        assertEquals(3L, result.differences().get(2).length());
     }
 }

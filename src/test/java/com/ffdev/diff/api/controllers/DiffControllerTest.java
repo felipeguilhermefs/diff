@@ -1,6 +1,6 @@
-package com.ffdev.diff.controllers;
+package com.ffdev.diff.api.controllers;
 
-import com.ffdev.diff.dtos.DiffResultDTO;
+import com.ffdev.diff.api.dtos.DiffResonseDTO;
 import com.ffdev.diff.helpers.PostDataProvider;
 import com.ffdev.diff.helpers.RandomIdProvider;
 import org.junit.jupiter.api.AfterEach;
@@ -123,14 +123,14 @@ class DiffControllerTest {
 
             assertEquals(HttpStatus.ACCEPTED, rightResponse.getStatusCode());
 
-            ResponseEntity<DiffResultDTO> response = restTemplate.getForEntity(
+            ResponseEntity<DiffResonseDTO> response = restTemplate.getForEntity(
                     "http://localhost:" + port + "/v1/diff/{id}",
-                    DiffResultDTO.class,
+                    DiffResonseDTO.class,
                     id
             );
 
             assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertEquals(new DiffResultDTO("EQUAL", emptyList()), response.getBody());
+            assertEquals(new DiffResonseDTO("EQUAL", emptyList()), response.getBody());
         }
     }
 }

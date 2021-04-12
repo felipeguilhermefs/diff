@@ -1,7 +1,7 @@
 package com.ffdev.diff.services;
 
 import com.ffdev.diff.domain.DiffPart;
-import com.ffdev.diff.dtos.DiffResultDTO;
+import com.ffdev.diff.api.dtos.DiffResonseDTO;
 import com.ffdev.diff.exceptions.DiffPartNotFoundException;
 import com.ffdev.diff.repositories.DiffPartRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -100,7 +100,7 @@ class DiffServiceTest {
             String testId = "any-id";
             String testData = "any-data";
 
-            DiffResultDTO expectedResult = new DiffResultDTO("EQUAL", emptyList());
+            DiffResonseDTO expectedResult = new DiffResonseDTO("EQUAL", emptyList());
             when(checkService.getDiff(eq(testData), eq(testData)))
                     .thenReturn(expectedResult);
 
