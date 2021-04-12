@@ -1,4 +1,4 @@
-package com.ffdev.diff.services;
+package com.ffdev.diff.domain.services;
 
 import com.ffdev.diff.domain.models.Diff;
 import com.ffdev.diff.domain.models.Difference;

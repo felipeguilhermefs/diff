@@ -1,10 +1,10 @@
-package com.ffdev.diff.services;
+package com.ffdev.diff.domain.services;
 
-import com.ffdev.diff.domain.enums.DiffPart;
+import com.ffdev.diff.domain.enums.DiffSide;
 import com.ffdev.diff.domain.models.Diff;
 import com.ffdev.diff.domain.models.Difference;
-import com.ffdev.diff.exceptions.DiffPartNotFoundException;
-import com.ffdev.diff.repositories.DiffPartRepository;
+import com.ffdev.diff.domain.exceptions.DiffSideNotFoundException;
+import com.ffdev.diff.domain.repositories.DiffSideRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,11 +22,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
-@DisplayName("Diff CService")
+@DisplayName("Diff Service")
 class DiffServiceTest {
 
     @Mock
-    private DiffPartRepository repository;
+    private DiffSideRepository repository;
 
     @Mock
     private DiffCheckService checkService;
@@ -52,7 +52,7 @@ class DiffServiceTest {
 
             service.saveLeft(testId, testData);
 
-            verify(repository).save(eq(DiffPart.LEFT), eq(testId), eq(testData));
+            verify(repository).save(eq(DiffSide.LEFT), eq(testId), eq(testData));
         }
     }
 
@@ -68,7 +68,7 @@ class DiffServiceTest {
 
             service.saveRight(testId, testData);
 
-            verify(repository).save(eq(DiffPart.RIGHT), eq(testId), eq(testData));
+            verify(repository).save(eq(DiffSide.RIGHT), eq(testId), eq(testData));
         }
     }
 
@@ -77,27 +77,27 @@ class DiffServiceTest {
     class GetById {
 
         @Test
-        @DisplayName("should throw an exception if left part is not found")
-        public void shouldThrowNotFoundForLeftPart() {
+        @DisplayName("should throw an exception if left side is not found")
+        public void shouldThrowNotFoundForLeftSides() {
             String testId = "any-id";
 
-            withDiffPart(testId, null, "some-data");
+            withDiffSides(testId, null, "some-data");
 
-            assertThrows(DiffPartNotFoundException.class, () -> service.getById(testId));
+            assertThrows(DiffSideNotFoundException.class, () -> service.getById(testId));
         }
 
         @Test
-        @DisplayName("should throw an exception if right part is not found")
-        public void shouldThrowNotFoundForRightPart() {
+        @DisplayName("should throw an exception if right side is not found")
+        public void shouldThrowNotFoundForRightSides() {
             String testId = "any-id";
 
-            withDiffPart(testId, "some-data", null);
+            withDiffSides(testId, "some-data", null);
 
-            assertThrows(DiffPartNotFoundException.class, () -> service.getById(testId));
+            assertThrows(DiffSideNotFoundException.class, () -> service.getById(testId));
         }
 
         @Test
-        @DisplayName("should return diff when both parts are present")
+        @DisplayName("should return diff when both sides are present")
         public void shouldReturnDiff() {
             String testId = "any-id";
             String testData = "any-data";
@@ -106,16 +106,16 @@ class DiffServiceTest {
             when(checkService.getDiff(eq(testData), eq(testData)))
                     .thenReturn(expectedDiff);
 
-            withDiffPart(testId, testData, testData);
+            withDiffSides(testId, testData, testData);
 
             assertEquals(expectedDiff, service.getById(testId));
         }
 
-        private void withDiffPart(String id, String left, String right) {
-            when(repository.getById(eq(DiffPart.LEFT), eq(id)))
+        private void withDiffSides(String id, String left, String right) {
+            when(repository.getById(eq(DiffSide.LEFT), eq(id)))
                     .thenReturn(Optional.ofNullable(left));
 
-            when(repository.getById(eq(DiffPart.RIGHT), eq(id)))
+            when(repository.getById(eq(DiffSide.RIGHT), eq(id)))
                     .thenReturn(Optional.ofNullable(right));
         }
     }

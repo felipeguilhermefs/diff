@@ -1,7 +1,7 @@
 package com.ffdev.diff.api.controllers;
 
 import com.ffdev.diff.api.dtos.ResponseDTO;
-import com.ffdev.diff.services.DiffService;
+import com.ffdev.diff.domain.services.DiffService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

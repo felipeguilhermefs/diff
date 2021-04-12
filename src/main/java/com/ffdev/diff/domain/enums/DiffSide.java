@@ -1,12 +1,12 @@
 package com.ffdev.diff.domain.enums;
 
-public enum DiffPart {
+public enum DiffSide {
     LEFT("left"),
     RIGHT("right");
 
     private final String id;
 
-    DiffPart(String id) {
+    DiffSide(String id) {
         this.id = id;
     }
 
