@@ -1,9 +1,10 @@
 package com.ffdev.diff.domain.services;
 
 import com.ffdev.diff.domain.enums.DiffSide;
+import com.ffdev.diff.domain.exceptions.DiffSideNotFoundException;
+import com.ffdev.diff.domain.exceptions.InvalidBase64Exception;
 import com.ffdev.diff.domain.models.Diff;
 import com.ffdev.diff.domain.models.Difference;
-import com.ffdev.diff.domain.exceptions.DiffSideNotFoundException;
 import com.ffdev.diff.domain.repositories.DiffSideRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,19 +15,19 @@ import org.mockito.Mock;
 import java.util.Optional;
 
 import static com.ffdev.diff.domain.enums.DiffResult.EQUAL;
+import static com.ffdev.diff.helpers.Base64Helper.encodeB64;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 @DisplayName("Diff Service")
 class DiffServiceTest {
 
     @Mock
-    private DiffSideRepository repository;
+    private DiffSideRepository sideRepository;
 
     @Mock
     private DiffCheckService checkService;
@@ -37,7 +38,7 @@ class DiffServiceTest {
     public void setup() {
         openMocks(this);
 
-        service = new DiffService(repository, checkService);
+        service = new DiffService(sideRepository, checkService);
     }
 
     @Nested
@@ -50,9 +51,20 @@ class DiffServiceTest {
             String testId = "any-id";
             String testData = "any-data";
 
-            service.saveLeft(testId, testData);
+            service.saveLeft(testId, encodeB64(testData));
 
-            verify(repository).save(eq(DiffSide.LEFT), eq(testId), eq(testData));
+            verify(sideRepository).save(eq(DiffSide.LEFT), eq(testId), eq(testData));
+        }
+
+        @Test
+        @DisplayName("should thrown error if data is not Base64")
+        public void shouldThrowB64Exception() {
+            String testId = "any-id";
+            String testData = "any-data";
+
+            assertThrows(InvalidBase64Exception.class, () -> service.saveLeft(testId, testData));
+
+            verifyNoInteractions(sideRepository);
         }
     }
 
@@ -66,9 +78,20 @@ class DiffServiceTest {
             String testId = "any-id";
             String testData = "any-data";
 
-            service.saveRight(testId, testData);
+            service.saveRight(testId, encodeB64(testData));
 
-            verify(repository).save(eq(DiffSide.RIGHT), eq(testId), eq(testData));
+            verify(sideRepository).save(eq(DiffSide.RIGHT), eq(testId), eq(testData));
+        }
+
+        @Test
+        @DisplayName("should thrown error if data is not Base64")
+        public void shouldThrowB64Exception() {
+            String testId = "any-id";
+            String testData = "any-data";
+
+            assertThrows(InvalidBase64Exception.class, () -> service.saveRight(testId, testData));
+
+            verifyNoInteractions(sideRepository);
         }
     }
 
@@ -112,10 +135,10 @@ class DiffServiceTest {
         }
 
         private void withDiffSides(String id, String left, String right) {
-            when(repository.getById(eq(DiffSide.LEFT), eq(id)))
+            when(sideRepository.getById(eq(DiffSide.LEFT), eq(id)))
                     .thenReturn(Optional.ofNullable(left));
 
-            when(repository.getById(eq(DiffSide.RIGHT), eq(id)))
+            when(sideRepository.getById(eq(DiffSide.RIGHT), eq(id)))
                     .thenReturn(Optional.ofNullable(right));
         }
     }

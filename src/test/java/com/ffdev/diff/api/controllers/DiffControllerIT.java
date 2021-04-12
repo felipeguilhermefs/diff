@@ -2,6 +2,7 @@ package com.ffdev.diff.api.controllers;
 
 import com.ffdev.diff.api.dtos.ErrorDTO;
 import com.ffdev.diff.api.dtos.ResponseDTO;
+import com.ffdev.diff.domain.enums.DiffSide;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +18,10 @@ import org.springframework.http.ResponseEntity;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.ffdev.diff.api.enums.ErrorCode.LEFT_NOT_FOUND;
-import static com.ffdev.diff.api.enums.ErrorCode.RIGHT_NOT_FOUND;
+import static com.ffdev.diff.api.enums.ErrorCode.*;
+import static com.ffdev.diff.domain.enums.DiffSide.LEFT;
+import static com.ffdev.diff.domain.enums.DiffSide.RIGHT;
+import static com.ffdev.diff.helpers.Base64Helper.encodeB64;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -43,12 +46,42 @@ class DiffControllerIT {
     }
 
     @Test
+    @DisplayName("should return 409 if left side is not Base64")
+    public void shouldReturn409IfLeftNotBase64() {
+        String testId = generateRandom();
+        String testData = "{\"id\":123,\"message\":\"some json\"}";
+
+        ResponseEntity<ErrorDTO> response = postError(LEFT, testId, testData);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ErrorDTO error = response.getBody();
+        assertNotNull(error);
+        assertEquals(BASE64_INVALID, error.code());
+        assertEquals("Invalid base 64 data", error.message());
+    }
+
+    @Test
+    @DisplayName("should return 409 if right side is not Base64")
+    public void shouldReturn409IfRightNotBase64() {
+        String testId = generateRandom();
+        String testData = "{\"id\":123,\"message\":\"some json\"}";
+
+        ResponseEntity<ErrorDTO> response = postError(RIGHT, testId, testData);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ErrorDTO error = response.getBody();
+        assertNotNull(error);
+        assertEquals(BASE64_INVALID, error.code());
+        assertEquals("Invalid base 64 data", error.message());
+    }
+
+    @Test
     @DisplayName("should return 404 if right side is missing")
     public void shouldReturn404IfNoRightSide() {
         String testId = generateRandom();
         String testData = "{\"id\":123,\"message\":\"some json\"}";
 
-        assertEquals(HttpStatus.ACCEPTED, postLeft(testId, testData));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(LEFT, testId, testData));
 
         ResponseEntity<ErrorDTO> response = getErrorDiff(testId);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -65,7 +98,7 @@ class DiffControllerIT {
         String testId = generateRandom();
         String testData = "{\"id\":123,\"message\":\"some json\"}";
 
-        assertEquals(HttpStatus.ACCEPTED, postRight(testId, testData));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(RIGHT, testId, testData));
 
         ResponseEntity<ErrorDTO> response = getErrorDiff(testId);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -82,8 +115,8 @@ class DiffControllerIT {
         String testId = generateRandom();
         String testData = "{\"id\":123,\"message\":\"some json\"}";
 
-        assertEquals(HttpStatus.ACCEPTED, postLeft(testId, testData));
-        assertEquals(HttpStatus.ACCEPTED, postRight(testId, testData));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(LEFT, testId, testData));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(RIGHT, testId, testData));
 
         ResponseEntity<ResponseDTO> response = getDiff(testId);
 
@@ -101,8 +134,8 @@ class DiffControllerIT {
         String testId = generateRandom();
         String testData = "{\"id\":123,\"message\":\"some json\"}";
 
-        assertEquals(HttpStatus.ACCEPTED, postLeft(testId, testData + testId.charAt(0)));
-        assertEquals(HttpStatus.ACCEPTED, postRight(testId, testData));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(LEFT, testId, testData + testId.charAt(0)));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(RIGHT, testId, testData));
 
         ResponseEntity<ResponseDTO> response = getDiff(testId);
 
@@ -122,8 +155,8 @@ class DiffControllerIT {
         //                      ||     |               ||||
         String rData = "{\"id\":213,\"massage\":\"some JSON\"}";
 
-        assertEquals(HttpStatus.ACCEPTED, postLeft(testId, lData));
-        assertEquals(HttpStatus.ACCEPTED, postRight(testId, rData));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(LEFT, testId, lData));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(RIGHT, testId, rData));
 
         ResponseEntity<ResponseDTO> response = getDiff(testId);
 
@@ -149,26 +182,26 @@ class DiffControllerIT {
         );
     }
 
-    private HttpStatus postRight(String id, String data) {
-        HttpEntity<String> body = new HttpEntity<>(data);
+    private HttpStatus postEncoded(DiffSide side, String id, String data) {
+        HttpEntity<String> body = new HttpEntity<>(encodeB64(data));
 
         return restTemplate.postForEntity(
-                "http://localhost:" + port + "/v1/diff/{id}/right",
+                "http://localhost:" + port + "/v1/diff/{id}/" + side.getId(),
                 body,
                 Void.class,
                 id
         ).getStatusCode();
     }
 
-    private HttpStatus postLeft(String id, String data) {
+    private ResponseEntity<ErrorDTO> postError(DiffSide side, String id, String data) {
         HttpEntity<String> body = new HttpEntity<>(data);
 
         return restTemplate.postForEntity(
-                "http://localhost:" + port + "/v1/diff/{id}/left",
+                "http://localhost:" + port + "/v1/diff/{id}/" + side.getId(),
                 body,
-                Void.class,
+                ErrorDTO.class,
                 id
-        ).getStatusCode();
+        );
     }
 
     private ResponseEntity<ErrorDTO> getErrorDiff(String id) {

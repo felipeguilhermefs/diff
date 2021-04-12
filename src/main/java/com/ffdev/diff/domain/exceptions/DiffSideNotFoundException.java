@@ -2,7 +2,7 @@ package com.ffdev.diff.domain.exceptions;
 
 import com.ffdev.diff.domain.enums.DiffSide;
 
-public class DiffSideNotFoundException extends RuntimeException {
+public class DiffSideNotFoundException extends CustomException {
 
     private final DiffSide side;
 
