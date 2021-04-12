@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DisplayName("Diff API")
-class DiffControllerTest {
+class DiffControllerIT {
 
     @LocalServerPort
     private int port;
