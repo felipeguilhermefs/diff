@@ -1,11 +1,18 @@
 package com.ffdev.diff.services;
 
+import com.ffdev.diff.repositories.DiffReadRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DiffQueryService {
 
-    public Object getById(String id) {
-        return null;
+    private final DiffReadRepository repository;
+
+    public DiffQueryService(DiffReadRepository repository) {
+        this.repository = repository;
+    }
+
+    public String getById(String id) {
+        return repository.getById(id).orElse("");
     }
 }
