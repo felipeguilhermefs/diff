@@ -6,6 +6,7 @@ import com.ffdev.diff.domain.exceptions.InvalidJsonException;
 import com.ffdev.diff.domain.models.Diff;
 import com.ffdev.diff.domain.repositories.DiffSideRepository;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +25,12 @@ public class DiffService {
         this.checkService = checkService;
     }
 
+    @CacheEvict(value = DIFF_CACHE, key = "#id")
     public void saveLeft(@NotNull String id, @NotNull String data) {
         save(DiffSide.LEFT, id, data);
     }
 
+    @CacheEvict(value = DIFF_CACHE, key = "#id")
     public void saveRight(@NotNull String id, @NotNull String data) {
         save(DiffSide.RIGHT, id, data);
     }

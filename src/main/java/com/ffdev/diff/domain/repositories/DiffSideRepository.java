@@ -3,14 +3,11 @@ package com.ffdev.diff.domain.repositories;
 import com.ffdev.diff.domain.enums.DiffSide;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
-import static com.ffdev.diff.configs.CacheConfig.DIFF_CACHE;
 
 @Repository
 public class DiffSideRepository {
@@ -35,7 +32,6 @@ public class DiffSideRepository {
      * @param id   represents diff ID
      * @param side which side it represents
      */
-    @CacheEvict(value = DIFF_CACHE, key = "#id")
     public void save(@NotNull DiffSide side, @NotNull String id, @NotNull String data) {
         String key = getKey(id, side);
         redisTemplate.opsForValue().set(key, data, timeToLive, TimeUnit.MINUTES);

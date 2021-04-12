@@ -251,6 +251,26 @@ class DiffControllerIT {
         assertEquals("DIFFERENT_SIZES", newDiff.result());
     }
 
+    @Test
+    @DisplayName("last diff should still be available if new diff side post errors out")
+    public void shouldNotRecalculateDiff() {
+        String testId = generateRandom();
+        String testData = "{\"id\":123,\"message\":\"some json\"}";
+
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(LEFT, testId, testData));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(RIGHT, testId, testData));
+
+        ResponseEntity<ResponseDTO> response = getDiff(testId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        assertEquals(HttpStatus.BAD_REQUEST, postError(LEFT, testId, "any-bad-data").getStatusCode());
+
+        ResponseEntity<ResponseDTO> cacheResponse = getDiff(testId);
+        assertEquals(HttpStatus.OK, cacheResponse.getStatusCode());
+
+        assertEquals(response.getBody(), cacheResponse.getBody());
+    }
+
     private ResponseEntity<ResponseDTO> getDiff(String id) {
         return restTemplate.getForEntity(
                 "http://localhost:" + port + "/v1/diff/{id}",
