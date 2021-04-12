@@ -1,5 +1,6 @@
 package com.ffdev.diff.controllers;
 
+import com.ffdev.diff.dtos.DiffResultDTO;
 import com.ffdev.diff.helpers.PostDataProvider;
 import com.ffdev.diff.helpers.RandomIdProvider;
 import org.junit.jupiter.api.AfterEach;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -97,16 +99,38 @@ class DiffControllerTest {
 
         @ParameterizedTest
         @ArgumentsSource(RandomIdProvider.class)
-        @DisplayName("should return diff data for given ID")
-        public void shouldReturnOk(String id) {
+        @DisplayName("should return diff data for given ID when both are equal")
+        public void shouldReturnOkWhenEqual(String id) {
+            HttpEntity<String> left = new HttpEntity<>("some-data");
 
-            ResponseEntity<Void> response = restTemplate.getForEntity(
-                    "http://localhost:" + port + "/v1/diff/{id}",
+            ResponseEntity<Void> leftResponse = restTemplate.postForEntity(
+                    "http://localhost:" + port + "/v1/diff/{id}/left",
+                    left,
                     Void.class,
                     id
             );
 
+            assertEquals(HttpStatus.ACCEPTED, leftResponse.getStatusCode());
+
+            HttpEntity<String> right = new HttpEntity<>("some-data");
+
+            ResponseEntity<Void> rightResponse = restTemplate.postForEntity(
+                    "http://localhost:" + port + "/v1/diff/{id}/right",
+                    right,
+                    Void.class,
+                    id
+            );
+
+            assertEquals(HttpStatus.ACCEPTED, rightResponse.getStatusCode());
+
+            ResponseEntity<DiffResultDTO> response = restTemplate.getForEntity(
+                    "http://localhost:" + port + "/v1/diff/{id}",
+                    DiffResultDTO.class,
+                    id
+            );
+
             assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(new DiffResultDTO("EQUAL", emptyList()), response.getBody());
         }
     }
 }
