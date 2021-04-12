@@ -37,11 +37,7 @@ class DiffQueryServiceTest {
     public void shouldThrowNotFoundForLeftPart() {
         String testId = "some-id";
 
-        when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
-                .thenReturn(Optional.empty());
-
-        when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
-                .thenReturn(Optional.of("some-data"));
+        withDiffPart(testId, null, "some-data");
 
         assertThrows(DiffPartNotFoundException.class, () -> service.getById(testId));
     }
@@ -51,11 +47,7 @@ class DiffQueryServiceTest {
     public void shouldThrowNotFoundForRightPart() {
         String testId = "some-id";
 
-        when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
-                .thenReturn(Optional.empty());
-
-        when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
-                .thenReturn(Optional.of("some-data"));
+        withDiffPart(testId, "some-data", null);
 
         assertThrows(DiffPartNotFoundException.class, () -> service.getById(testId));
     }
@@ -79,11 +71,7 @@ class DiffQueryServiceTest {
     public void shouldReturnDifferentSizes() {
         String testId = "some-id";
 
-        when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
-                .thenReturn(Optional.of("some-data"));
-
-        when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
-                .thenReturn(Optional.of("other-data"));
+        withDiffPart(testId, "some-data", "other-data");
 
         DiffResultDTO result = service.getById(testId);
 
@@ -92,22 +80,74 @@ class DiffQueryServiceTest {
     }
 
     @Test
-    @DisplayName("should return changes")
-    public void shouldReturnChanges() {
+    @DisplayName("should return changes at the start")
+    public void shouldReturnChangesAtStart() {
         String testId = "some-id";
 
-        when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
-                .thenReturn(Optional.of("some-data"));
-
-        when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
-                .thenReturn(Optional.of("come-data"));
+        withDiffPart(testId, "some-data", "cene-data");
 
         DiffResultDTO result = service.getById(testId);
 
         assertEquals("DIFFERENT", result.getStatus());
         assertEquals(1, result.getChanges().size());
-        assertEquals("some-action", result.getChanges().get(0).getAction());
         assertEquals(0L, result.getChanges().get(0).getOffset());
-        assertEquals(9L, result.getChanges().get(0).getLength());
+        assertEquals(3L, result.getChanges().get(0).getLength());
+    }
+
+    @Test
+    @DisplayName("should return changes at the end")
+    public void shouldReturnChangesAtEnd() {
+        String testId = "some-id";
+
+        withDiffPart(testId, "some-data", "some-yolo");
+
+        DiffResultDTO result = service.getById(testId);
+
+        assertEquals("DIFFERENT", result.getStatus());
+        assertEquals(1, result.getChanges().size());
+        assertEquals(5L, result.getChanges().get(0).getOffset());
+        assertEquals(4L, result.getChanges().get(0).getLength());
+    }
+
+    @Test
+    @DisplayName("should return changes in the middle")
+    public void shouldReturnChangesInMiddle() {
+        String testId = "some-id";
+
+        withDiffPart(testId, "some-data", "solo:beta");
+
+        DiffResultDTO result = service.getById(testId);
+
+        assertEquals("DIFFERENT", result.getStatus());
+        assertEquals(1, result.getChanges().size());
+        assertEquals(2L, result.getChanges().get(0).getOffset());
+        assertEquals(5L, result.getChanges().get(0).getLength());
+    }
+
+    @Test
+    @DisplayName("should return multiple changes")
+    public void shouldReturnMultipleChanges() {
+        String testId = "some-id";
+
+        withDiffPart(testId, "some-data", "iota-bela");
+
+        DiffResultDTO result = service.getById(testId);
+
+        assertEquals("DIFFERENT", result.getStatus());
+        assertEquals(3, result.getChanges().size());
+        assertEquals(0L, result.getChanges().get(0).getOffset());
+        assertEquals(1L, result.getChanges().get(0).getLength());
+        assertEquals(2L, result.getChanges().get(1).getOffset());
+        assertEquals(2L, result.getChanges().get(1).getLength());
+        assertEquals(5L, result.getChanges().get(2).getOffset());
+        assertEquals(3L, result.getChanges().get(2).getLength());
+    }
+
+    private void withDiffPart(String id, String left, String right) {
+        when(repository.getById(eq(DiffPart.LEFT), eq(id)))
+                .thenReturn(Optional.ofNullable(left));
+
+        when(repository.getById(eq(DiffPart.RIGHT), eq(id)))
+                .thenReturn(Optional.ofNullable(right));
     }
 }

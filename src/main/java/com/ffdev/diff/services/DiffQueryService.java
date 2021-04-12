@@ -8,10 +8,10 @@ import com.ffdev.diff.repositories.DiffPartRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 
 @Service
 public class DiffQueryService {
@@ -23,23 +23,52 @@ public class DiffQueryService {
     }
 
     public DiffResultDTO getById(@NotNull String id) {
-        String leftPart = getPart(DiffPart.LEFT, id);
-        String rightPart = getPart(DiffPart.RIGHT, id);
+        String left = getPart(DiffPart.LEFT, id);
+        String right = getPart(DiffPart.RIGHT, id);
 
-        if (leftPart.length() != rightPart.length()) {
+        if (left.length() != right.length()) {
             return new DiffResultDTO("DIFFERENT_SIZES", emptyList());
         }
 
-        if (leftPart.equals(rightPart)) {
+        if (left.equals(right)) {
             return new DiffResultDTO("EQUAL", emptyList());
         }
 
-        List<DiffChangeDTO> changes = singletonList(new DiffChangeDTO("some-action", 0L, (long) leftPart.length()));
-        return new DiffResultDTO("DIFFERENT", changes);
+        return new DiffResultDTO("DIFFERENT", getChanges(left, right));
     }
 
     private String getPart(DiffPart part, String id) {
         return repository.getById(part, id)
                 .orElseThrow(() -> new DiffPartNotFoundException(part));
+    }
+
+    private List<DiffChangeDTO> getChanges(String left, String right) {
+        List<DiffChangeDTO> changes = new ArrayList<>();
+        long changeOffset = 0;
+        boolean inChange = false;
+
+        for (int offset = 0; offset < left.length(); offset++) {
+
+            boolean isDifferent = left.charAt(offset) != right.charAt(offset);
+
+            boolean startsChange = isDifferent && !inChange;
+            if (startsChange) {
+                changeOffset = offset;
+                inChange = true;
+                continue;
+            }
+
+            boolean endsChange = !isDifferent && inChange;
+            if (endsChange) {
+                changes.add(new DiffChangeDTO(changeOffset, offset - changeOffset));
+                inChange = false;
+            }
+        }
+
+        if (inChange) {
+            changes.add(new DiffChangeDTO(changeOffset, left.length() - changeOffset));
+        }
+
+        return changes;
     }
 }
