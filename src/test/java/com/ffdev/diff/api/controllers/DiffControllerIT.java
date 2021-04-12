@@ -1,13 +1,9 @@
 package com.ffdev.diff.api.controllers;
 
 import com.ffdev.diff.api.dtos.ResponseDTO;
-import com.ffdev.diff.helpers.PostDataProvider;
-import com.ffdev.diff.helpers.RandomIdProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -18,9 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Set;
+import java.util.UUID;
 
-import static java.util.Collections.emptyList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DisplayName("Diff API")
@@ -43,94 +39,102 @@ class DiffControllerIT {
         }
     }
 
-    @Nested
-    @DisplayName("when saving left")
-    class SaveLeft {
+    @Test
+    @DisplayName("should return 200 with EQUAL result when both sides are the same")
+    public void shouldReturn200WhenEqual() {
+        String testId = generateRandom();
+        String testData = "{\"id\":123,\"message\":\"some json\"}";
 
-        @ParameterizedTest
-        @ArgumentsSource(PostDataProvider.class)
-        @DisplayName("should accept post data for given ID")
-        public void shouldAccept(String id, String data) {
-            HttpEntity<String> body = new HttpEntity<>(data);
+        assertEquals(HttpStatus.ACCEPTED, postLeft(testId, testData));
+        assertEquals(HttpStatus.ACCEPTED, postRight(testId, testData));
 
-            ResponseEntity<Void> response = restTemplate.postForEntity(
-                    "http://localhost:" + port + "/v1/diff/{id}/left",
-                    body,
-                    Void.class,
-                    id
-            );
+        ResponseEntity<ResponseDTO> response = getDiff(testId);
 
-            assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-            String dataSaved = redisTemplate.opsForValue().get("diff:" + id + ":left");
-
-            assertEquals(data, dataSaved);
-        }
+        ResponseDTO diff = response.getBody();
+        assertNotNull(diff);
+        assertEquals("EQUAL", diff.result());
+        assertTrue(diff.differences().isEmpty());
     }
 
-    @Nested
-    @DisplayName("when saving right")
-    class SaveRight {
+    @Test
+    @DisplayName("should return 200 with DIFFERENT_SIZES result when sides are not equivalent in length")
+    public void shouldReturn200WhenDifferentSizes() {
+        String testId = generateRandom();
+        String testData = "{\"id\":123,\"message\":\"some json\"}";
 
-        @ParameterizedTest
-        @ArgumentsSource(PostDataProvider.class)
-        @DisplayName("should accept post data for given ID")
-        public void shouldAccept(String id, String data) {
-            HttpEntity<String> body = new HttpEntity<>(data);
+        assertEquals(HttpStatus.ACCEPTED, postLeft(testId, testData + testId.charAt(0)));
+        assertEquals(HttpStatus.ACCEPTED, postRight(testId, testData));
 
-            ResponseEntity<Void> response = restTemplate.postForEntity(
-                    "http://localhost:" + port + "/v1/diff/{id}/right",
-                    body,
-                    Void.class,
-                    id
-            );
+        ResponseEntity<ResponseDTO> response = getDiff(testId);
 
-            assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-            String dataSaved = redisTemplate.opsForValue().get("diff:" + id + ":right");
-
-            assertEquals(data, dataSaved);
-        }
+        ResponseDTO diff = response.getBody();
+        assertNotNull(diff);
+        assertEquals("DIFFERENT_SIZES", diff.result());
+        assertTrue(diff.differences().isEmpty());
     }
 
-    @Nested
-    @DisplayName("when retrieving diff")
-    class GetDiff {
+    @Test
+    @DisplayName("should return 200 with DIFFERENT result when sides are not equal")
+    public void shouldReturn200WhenDifferent() {
+        String testId = generateRandom();
+        String lData = "{\"id\":123,\"message\":\"some json\"}";
+        //                      ||     |               ||||
+        String rData = "{\"id\":213,\"massage\":\"some JSON\"}";
 
-        @ParameterizedTest
-        @ArgumentsSource(RandomIdProvider.class)
-        @DisplayName("should return diff data for given ID when both are equal")
-        public void shouldReturnOkWhenEqual(String id) {
-            HttpEntity<String> left = new HttpEntity<>("some-data");
+        assertEquals(HttpStatus.ACCEPTED, postLeft(testId, lData));
+        assertEquals(HttpStatus.ACCEPTED, postRight(testId, rData));
 
-            ResponseEntity<Void> leftResponse = restTemplate.postForEntity(
-                    "http://localhost:" + port + "/v1/diff/{id}/left",
-                    left,
-                    Void.class,
-                    id
-            );
+        ResponseEntity<ResponseDTO> response = getDiff(testId);
 
-            assertEquals(HttpStatus.ACCEPTED, leftResponse.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-            HttpEntity<String> right = new HttpEntity<>("some-data");
+        ResponseDTO diff = response.getBody();
+        assertNotNull(diff);
+        assertEquals("DIFFERENT", diff.result());
+        assertEquals(3, diff.differences().size());
+        assertEquals(6L, diff.differences().get(0).offset());
+        assertEquals(2L, diff.differences().get(0).length());
+        assertEquals(12L, diff.differences().get(1).offset());
+        assertEquals(1L, diff.differences().get(1).length());
+        assertEquals(26L, diff.differences().get(2).offset());
+        assertEquals(4L, diff.differences().get(2).length());
+    }
 
-            ResponseEntity<Void> rightResponse = restTemplate.postForEntity(
-                    "http://localhost:" + port + "/v1/diff/{id}/right",
-                    right,
-                    Void.class,
-                    id
-            );
+    private ResponseEntity<ResponseDTO> getDiff(String id) {
+        return restTemplate.getForEntity(
+                "http://localhost:" + port + "/v1/diff/{id}",
+                ResponseDTO.class,
+                id
+        );
+    }
 
-            assertEquals(HttpStatus.ACCEPTED, rightResponse.getStatusCode());
+    private HttpStatus postRight(String id, String data) {
+        HttpEntity<String> body = new HttpEntity<>(data);
 
-            ResponseEntity<ResponseDTO> response = restTemplate.getForEntity(
-                    "http://localhost:" + port + "/v1/diff/{id}",
-                    ResponseDTO.class,
-                    id
-            );
+        return restTemplate.postForEntity(
+                "http://localhost:" + port + "/v1/diff/{id}/right",
+                body,
+                Void.class,
+                id
+        ).getStatusCode();
+    }
 
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertEquals(new ResponseDTO("EQUAL", emptyList()), response.getBody());
-        }
+    private HttpStatus postLeft(String id, String data) {
+        HttpEntity<String> body = new HttpEntity<>(data);
+
+        return restTemplate.postForEntity(
+                "http://localhost:" + port + "/v1/diff/{id}/left",
+                body,
+                Void.class,
+                id
+        ).getStatusCode();
+    }
+
+    private String generateRandom() {
+        return UUID.randomUUID().toString();
     }
 }
