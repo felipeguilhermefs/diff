@@ -1,11 +1,11 @@
 package com.ffdev.diff.services;
 
+import com.ffdev.diff.dtos.DiffResultDTO;
 import com.ffdev.diff.exceptions.DiffNotFoundException;
 import com.ffdev.diff.repositories.DiffReadRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.util.Optional;
@@ -31,25 +31,31 @@ class DiffQueryServiceTest {
         service = new DiffQueryService(repository);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = "some-id")
+    @Test
     @DisplayName("should return data found")
-    public void shouldReturnDataFound(String id) {
+    public void shouldReturnDataFound() {
+        String testId = "some-id";
 
-        when(repository.getById(eq(id)))
+        when(repository.getById(eq(testId)))
                 .thenReturn(Optional.of("some-data"));
 
-        assertEquals("some-data", service.getById(id));
+        DiffResultDTO result = service.getById(testId);
+
+        assertEquals("some-result-status", result.getStatus());
+        assertEquals(1, result.getChanges().size());
+        assertEquals("some-action", result.getChanges().get(0).getAction());
+        assertEquals(0L, result.getChanges().get(0).getOffset());
+        assertEquals(9L, result.getChanges().get(0).getLength());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = "some-id")
+    @Test
     @DisplayName("should throw an exception if diff is not found")
-    public void shouldReturnEmptyString(String id) {
+    public void shouldReturnEmptyString() {
+        String testId = "some-id";
 
-        when(repository.getById(eq(id)))
+        when(repository.getById(eq(testId)))
                 .thenReturn(Optional.empty());
 
-        assertThrows(DiffNotFoundException.class, () -> service.getById(id));
+        assertThrows(DiffNotFoundException.class, () -> service.getById(testId));
     }
 }
