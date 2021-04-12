@@ -1,10 +1,7 @@
 package com.ffdev.diff.services;
 
-import com.ffdev.diff.domain.DiffPart;
 import com.ffdev.diff.dtos.DiffChangeDTO;
 import com.ffdev.diff.dtos.DiffResultDTO;
-import com.ffdev.diff.exceptions.DiffPartNotFoundException;
-import com.ffdev.diff.repositories.DiffPartRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -14,17 +11,12 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 
 @Service
-public class DiffQueryService {
+public class DiffCheckService {
 
-    private final DiffPartRepository repository;
-
-    public DiffQueryService(DiffPartRepository repository) {
-        this.repository = repository;
-    }
-
-    public DiffResultDTO getById(@NotNull String id) {
-        String left = getPart(DiffPart.LEFT, id);
-        String right = getPart(DiffPart.RIGHT, id);
+    /**
+     * getDiff linearly compares two strings and returns information of side-by-side differences
+     */
+    public DiffResultDTO getDiff(@NotNull String left, @NotNull String right) {
 
         if (left.length() != right.length()) {
             return new DiffResultDTO("DIFFERENT_SIZES", emptyList());
@@ -35,11 +27,6 @@ public class DiffQueryService {
         }
 
         return new DiffResultDTO("DIFFERENT", getChanges(left, right));
-    }
-
-    private String getPart(DiffPart part, String id) {
-        return repository.getById(part, id)
-                .orElseThrow(() -> new DiffPartNotFoundException(part));
     }
 
     private List<DiffChangeDTO> getChanges(String left, String right) {
