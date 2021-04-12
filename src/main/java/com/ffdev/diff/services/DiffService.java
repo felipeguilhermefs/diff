@@ -1,6 +1,6 @@
 package com.ffdev.diff.services;
 
-import com.ffdev.diff.domain.DiffPart;
+import com.ffdev.diff.domain.enums.DiffPart;
 import com.ffdev.diff.api.dtos.DiffResonseDTO;
 import com.ffdev.diff.exceptions.DiffPartNotFoundException;
 import com.ffdev.diff.repositories.DiffPartRepository;

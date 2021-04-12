@@ -1,4 +1,4 @@
-package com.ffdev.diff.domain;
+package com.ffdev.diff.domain.enums;
 
 public enum DiffPart {
     LEFT("left"),

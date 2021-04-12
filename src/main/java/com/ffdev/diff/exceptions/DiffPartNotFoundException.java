@@ -1,6 +1,6 @@
 package com.ffdev.diff.exceptions;
 
-import com.ffdev.diff.domain.DiffPart;
+import com.ffdev.diff.domain.enums.DiffPart;
 
 public class DiffPartNotFoundException extends RuntimeException {
 

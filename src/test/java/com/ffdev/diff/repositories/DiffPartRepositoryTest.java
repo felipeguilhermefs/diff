@@ -1,6 +1,6 @@
 package com.ffdev.diff.repositories;
 
-import com.ffdev.diff.domain.DiffPart;
+import com.ffdev.diff.domain.enums.DiffPart;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
