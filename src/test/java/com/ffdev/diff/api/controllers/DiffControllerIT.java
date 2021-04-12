@@ -206,6 +206,51 @@ class DiffControllerIT {
         assertEquals(4L, diff.differences().get(2).length());
     }
 
+    @Test
+    @DisplayName("cache should not change diff return 200")
+    public void shouldReturn200WithCache() {
+        String testId = generateRandom();
+        String testData = "{\"id\":123,\"message\":\"some json\"}";
+
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(LEFT, testId, testData));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(RIGHT, testId, testData));
+
+        ResponseEntity<ResponseDTO> response = getDiff(testId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        ResponseEntity<ResponseDTO> cacheResponse = getDiff(testId);
+        assertEquals(HttpStatus.OK, cacheResponse.getStatusCode());
+
+        assertEquals(response.getBody(), cacheResponse.getBody());
+    }
+
+    @Test
+    @DisplayName("diff should change if one of its sides changed")
+    public void shouldRecalculateDiff() {
+        String testId = generateRandom();
+        String testData = "{\"id\":123,\"message\":\"some json\"}";
+
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(LEFT, testId, testData));
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(RIGHT, testId, testData));
+
+        ResponseEntity<ResponseDTO> response = getDiff(testId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        ResponseDTO diff = response.getBody();
+        assertNotNull(diff);
+        assertEquals("EQUAL", diff.result());
+
+        String otherData = "{\"id\":123,\"message\":\"other json\"}";
+        assertEquals(HttpStatus.ACCEPTED, postEncoded(LEFT, testId, otherData));
+
+        ResponseEntity<ResponseDTO> newResponse = getDiff(testId);
+        assertEquals(HttpStatus.OK, newResponse.getStatusCode());
+
+        ResponseDTO newDiff = newResponse.getBody();
+        assertNotNull(newDiff);
+        assertEquals("DIFFERENT_SIZES", newDiff.result());
+    }
+
     private ResponseEntity<ResponseDTO> getDiff(String id) {
         return restTemplate.getForEntity(
                 "http://localhost:" + port + "/v1/diff/{id}",
