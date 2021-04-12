@@ -1,5 +1,6 @@
 package com.ffdev.diff.services;
 
+import com.ffdev.diff.exceptions.DiffNotFoundException;
 import com.ffdev.diff.repositories.DiffReadRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.mockito.Mock;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -42,12 +44,12 @@ class DiffQueryServiceTest {
 
     @ParameterizedTest
     @ValueSource(strings = "some-id")
-    @DisplayName("should return empty string when not found")
+    @DisplayName("should throw an exception if diff is not found")
     public void shouldReturnEmptyString(String id) {
 
         when(repository.getById(eq(id)))
                 .thenReturn(Optional.empty());
 
-        assertEquals("", service.getById(id));
+        assertThrows(DiffNotFoundException.class, () -> service.getById(id));
     }
 }

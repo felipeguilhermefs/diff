@@ -1,5 +1,6 @@
 package com.ffdev.diff.services;
 
+import com.ffdev.diff.exceptions.DiffNotFoundException;
 import com.ffdev.diff.repositories.DiffReadRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,6 @@ public class DiffQueryService {
     }
 
     public String getById(String id) {
-        return repository.getById(id).orElse("");
+        return repository.getById(id).orElseThrow(DiffNotFoundException::new);
     }
 }
