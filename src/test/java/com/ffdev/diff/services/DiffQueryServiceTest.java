@@ -1,8 +1,9 @@
 package com.ffdev.diff.services;
 
+import com.ffdev.diff.domain.DiffPart;
 import com.ffdev.diff.dtos.DiffResultDTO;
 import com.ffdev.diff.exceptions.DiffNotFoundException;
-import com.ffdev.diff.repositories.DiffReadRepository;
+import com.ffdev.diff.repositories.DiffPartRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,8 @@ import org.mockito.Mock;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -20,7 +21,7 @@ import static org.mockito.MockitoAnnotations.openMocks;
 class DiffQueryServiceTest {
 
     @Mock
-    private DiffReadRepository repository;
+    private DiffPartRepository repository;
 
     private DiffQueryService service;
 
@@ -36,7 +37,7 @@ class DiffQueryServiceTest {
     public void shouldReturnDataFound() {
         String testId = "some-id";
 
-        when(repository.getById(eq(testId)))
+        when(repository.getById(any(), eq(testId)))
                 .thenReturn(Optional.of("some-data"));
 
         DiffResultDTO result = service.getById(testId);
@@ -49,12 +50,46 @@ class DiffQueryServiceTest {
     }
 
     @Test
-    @DisplayName("should throw an exception if diff is not found")
-    public void shouldReturnEmptyString() {
+    @DisplayName("should return different sizes result")
+    public void shouldReturnDifferentSizes() {
         String testId = "some-id";
 
-        when(repository.getById(eq(testId)))
+        when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
+                .thenReturn(Optional.of("other-data"));
+
+        when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
+                .thenReturn(Optional.of("some-data"));
+
+        DiffResultDTO result = service.getById(testId);
+
+        assertEquals("DIFFERENT_SIZES", result.getStatus());
+        assertTrue(result.getChanges().isEmpty());
+    }
+
+    @Test
+    @DisplayName("should throw an exception if left part is not found")
+    public void shouldThrowNotFoundForLeftPart() {
+        String testId = "some-id";
+
+        when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
                 .thenReturn(Optional.empty());
+
+        when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
+                .thenReturn(Optional.of("some-data"));
+
+        assertThrows(DiffNotFoundException.class, () -> service.getById(testId));
+    }
+
+    @Test
+    @DisplayName("should throw an exception if right part is not found")
+    public void shouldThrowNotFoundForRightPart() {
+        String testId = "some-id";
+
+        when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
+                .thenReturn(Optional.empty());
+
+        when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
+                .thenReturn(Optional.of("some-data"));
 
         assertThrows(DiffNotFoundException.class, () -> service.getById(testId));
     }
