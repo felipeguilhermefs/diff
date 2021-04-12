@@ -33,40 +33,6 @@ class DiffQueryServiceTest {
     }
 
     @Test
-    @DisplayName("should return data found")
-    public void shouldReturnDataFound() {
-        String testId = "some-id";
-
-        when(repository.getById(any(), eq(testId)))
-                .thenReturn(Optional.of("some-data"));
-
-        DiffResultDTO result = service.getById(testId);
-
-        assertEquals("some-result-status", result.getStatus());
-        assertEquals(1, result.getChanges().size());
-        assertEquals("some-action", result.getChanges().get(0).getAction());
-        assertEquals(0L, result.getChanges().get(0).getOffset());
-        assertEquals(9L, result.getChanges().get(0).getLength());
-    }
-
-    @Test
-    @DisplayName("should return different sizes result")
-    public void shouldReturnDifferentSizes() {
-        String testId = "some-id";
-
-        when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
-                .thenReturn(Optional.of("other-data"));
-
-        when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
-                .thenReturn(Optional.of("some-data"));
-
-        DiffResultDTO result = service.getById(testId);
-
-        assertEquals("DIFFERENT_SIZES", result.getStatus());
-        assertTrue(result.getChanges().isEmpty());
-    }
-
-    @Test
     @DisplayName("should throw an exception if left part is not found")
     public void shouldThrowNotFoundForLeftPart() {
         String testId = "some-id";
@@ -92,5 +58,56 @@ class DiffQueryServiceTest {
                 .thenReturn(Optional.of("some-data"));
 
         assertThrows(DiffPartNotFoundException.class, () -> service.getById(testId));
+    }
+
+    @Test
+    @DisplayName("should return equal result")
+    public void shouldReturnEqual() {
+        String testId = "some-id";
+
+        when(repository.getById(any(), eq(testId)))
+                .thenReturn(Optional.of("some-data"));
+
+        DiffResultDTO result = service.getById(testId);
+
+        assertEquals("EQUAL", result.getStatus());
+        assertTrue(result.getChanges().isEmpty());
+    }
+
+    @Test
+    @DisplayName("should return different sizes result")
+    public void shouldReturnDifferentSizes() {
+        String testId = "some-id";
+
+        when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
+                .thenReturn(Optional.of("some-data"));
+
+        when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
+                .thenReturn(Optional.of("other-data"));
+
+        DiffResultDTO result = service.getById(testId);
+
+        assertEquals("DIFFERENT_SIZES", result.getStatus());
+        assertTrue(result.getChanges().isEmpty());
+    }
+
+    @Test
+    @DisplayName("should return changes")
+    public void shouldReturnChanges() {
+        String testId = "some-id";
+
+        when(repository.getById(eq(DiffPart.LEFT), eq(testId)))
+                .thenReturn(Optional.of("some-data"));
+
+        when(repository.getById(eq(DiffPart.RIGHT), eq(testId)))
+                .thenReturn(Optional.of("come-data"));
+
+        DiffResultDTO result = service.getById(testId);
+
+        assertEquals("DIFFERENT", result.getStatus());
+        assertEquals(1, result.getChanges().size());
+        assertEquals("some-action", result.getChanges().get(0).getAction());
+        assertEquals(0L, result.getChanges().get(0).getOffset());
+        assertEquals(9L, result.getChanges().get(0).getLength());
     }
 }

@@ -27,19 +27,19 @@ public class DiffQueryService {
         String rightPart = getPart(DiffPart.RIGHT, id);
 
         if (leftPart.length() != rightPart.length()) {
-            return buildDifferentSizes();
+            return new DiffResultDTO("DIFFERENT_SIZES", emptyList());
+        }
+
+        if (leftPart.equals(rightPart)) {
+            return new DiffResultDTO("EQUAL", emptyList());
         }
 
         List<DiffChangeDTO> changes = singletonList(new DiffChangeDTO("some-action", 0L, (long) leftPart.length()));
-        return new DiffResultDTO("some-result-status", changes);
+        return new DiffResultDTO("DIFFERENT", changes);
     }
 
     private String getPart(DiffPart part, String id) {
         return repository.getById(part, id)
                 .orElseThrow(() -> new DiffPartNotFoundException(part));
-    }
-
-    private DiffResultDTO buildDifferentSizes() {
-        return new DiffResultDTO("DIFFERENT_SIZES", emptyList());
     }
 }
