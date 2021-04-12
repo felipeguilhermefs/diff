@@ -1,5 +1,6 @@
 package com.ffdev.diff.api.controllers;
 
+import com.ffdev.diff.api.dtos.ErrorDTO;
 import com.ffdev.diff.api.dtos.ResponseDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.ffdev.diff.api.enums.ErrorCode.LEFT_NOT_FOUND;
+import static com.ffdev.diff.api.enums.ErrorCode.RIGHT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -37,6 +40,40 @@ class DiffControllerIT {
         if (allKeys != null) {
             redisTemplate.delete(allKeys);
         }
+    }
+
+    @Test
+    @DisplayName("should return 404 if right side is missing")
+    public void shouldReturn404IfNoRightSide() {
+        String testId = generateRandom();
+        String testData = "{\"id\":123,\"message\":\"some json\"}";
+
+        assertEquals(HttpStatus.ACCEPTED, postLeft(testId, testData));
+
+        ResponseEntity<ErrorDTO> response = getErrorDiff(testId);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        ErrorDTO error = response.getBody();
+        assertNotNull(error);
+        assertEquals(RIGHT_NOT_FOUND, error.code());
+        assertEquals("Diff right side was not found", error.message());
+    }
+
+    @Test
+    @DisplayName("should return 404 if left side is missing")
+    public void shouldReturn404IfNoLeftSide() {
+        String testId = generateRandom();
+        String testData = "{\"id\":123,\"message\":\"some json\"}";
+
+        assertEquals(HttpStatus.ACCEPTED, postRight(testId, testData));
+
+        ResponseEntity<ErrorDTO> response = getErrorDiff(testId);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        ErrorDTO error = response.getBody();
+        assertNotNull(error);
+        assertEquals(LEFT_NOT_FOUND, error.code());
+        assertEquals("Diff left side was not found", error.message());
     }
 
     @Test
@@ -132,6 +169,14 @@ class DiffControllerIT {
                 Void.class,
                 id
         ).getStatusCode();
+    }
+
+    private ResponseEntity<ErrorDTO> getErrorDiff(String id) {
+        return restTemplate.getForEntity(
+                "http://localhost:" + port + "/v1/diff/{id}",
+                ErrorDTO.class,
+                id
+        );
     }
 
     private String generateRandom() {
