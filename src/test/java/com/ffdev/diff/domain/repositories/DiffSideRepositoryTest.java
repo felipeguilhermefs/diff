@@ -28,8 +28,8 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 @DisplayName("Diff Side Repository")
 class DiffSideRepositoryTest {
 
-    @Value("${diff.side.ttl-minutes}")
-    private long ttl;
+    @Value("${diff.cache.ttl-minutes}")
+    private long timeToLive;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -71,7 +71,7 @@ class DiffSideRepositoryTest {
             Long remainingMinutes = redisTemplate.getExpire(testKey, TimeUnit.MINUTES);
 
             assertNotNull(remainingMinutes);
-            assertTrue(remainingMinutes <= ttl);
+            assertTrue(remainingMinutes <= timeToLive);
         }
     }
 

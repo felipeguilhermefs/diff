@@ -10,18 +10,20 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static com.ffdev.diff.configs.CacheConfig.DIFF_CACHE;
+
 @Repository
 public class DiffSideRepository {
 
     private final StringRedisTemplate redisTemplate;
-    private final long ttl;
+    private final long timeToLive;
 
     public DiffSideRepository(
             StringRedisTemplate redisTemplate,
-            @Value("${diff.side.ttl-minutes}") long ttl
+            @Value("${diff.cache.ttl-minutes}") long timeToLive
     ) {
         this.redisTemplate = redisTemplate;
-        this.ttl = ttl;
+        this.timeToLive = timeToLive;
     }
 
     /**
@@ -33,10 +35,10 @@ public class DiffSideRepository {
      * @param id   represents diff ID
      * @param side which side it represents
      */
-    @CacheEvict(value = "diff", key = "#id")
+    @CacheEvict(value = DIFF_CACHE, key = "#id")
     public void save(@NotNull DiffSide side, @NotNull String id, @NotNull String data) {
         String key = getKey(id, side);
-        redisTemplate.opsForValue().set(key, data, ttl, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(key, data, timeToLive, TimeUnit.MINUTES);
     }
 
     public Optional<String> getById(@NotNull DiffSide side, @NotNull String id) {
