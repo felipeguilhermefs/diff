@@ -6,6 +6,7 @@ import com.ffdev.diff.domain.exceptions.InvalidJsonException;
 import com.ffdev.diff.domain.models.Diff;
 import com.ffdev.diff.domain.repositories.DiffSideRepository;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import static com.ffdev.diff.helpers.Base64Helper.decodeB64;
@@ -40,6 +41,7 @@ public class DiffService {
         sideRepository.save(side, id, decodedData);
     }
 
+    @Cacheable(value = "diff", key = "#id")
     public Diff getById(@NotNull String id) {
         String left = getSide(DiffSide.LEFT, id);
         String right = getSide(DiffSide.RIGHT, id);

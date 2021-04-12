@@ -1,4 +1,6 @@
 package com.ffdev.diff.domain.models;
 
-public record Difference(Long offset, Long length) {
+import java.io.Serializable;
+
+public record Difference(Long offset, Long length) implements Serializable {
 }
