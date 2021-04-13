@@ -155,8 +155,8 @@ class DiffControllerIT extends AbstractRedisIT {
         @DisplayName("and result DIFFERENT_SIZES when sides are not equivalent in length")
         public void shouldReturn200WhenDifferentSizes() {
             var testId = uuid();
-            var leftData = json();
-            var rightData = leftData + testId.charAt(0);
+            var leftData = "{\"id\":123,\"message\":\"some-data\"}";
+            var rightData = "{\"id\":132,\"message\":\"other-data\"}";
 
             assertEquals(ACCEPTED, postLeft(testId, encodeB64(leftData)));
             assertEquals(ACCEPTED, postRight(testId, encodeB64(rightData)));

@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.RandomStringUtils.random;
 public class RandomHelper {
 
     //So we do not generate strings too big
-    private static final int MAX_CHARS = 20;
+    private static final int MAX_CHARS = 40;
 
     /**
      * Provides a random UUID string.
