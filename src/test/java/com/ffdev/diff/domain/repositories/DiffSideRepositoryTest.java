@@ -1,7 +1,7 @@
 package com.ffdev.diff.domain.repositories;
 
 import com.ffdev.diff.domain.models.DiffSide;
-import com.ffdev.diff.helpers.AbstractRedisIT;
+import com.ffdev.diff.shared.helpers.AbstractRedisIT;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtensionContext;

@@ -1,4 +1,4 @@
-package com.ffdev.diff.helpers;
+package com.ffdev.diff.shared.helpers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;

@@ -1,4 +1,4 @@
-package com.ffdev.diff.configs;
+package com.ffdev.diff.shared.configs;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;

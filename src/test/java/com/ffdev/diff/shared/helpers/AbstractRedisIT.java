@@ -1,4 +1,4 @@
-package com.ffdev.diff.helpers;
+package com.ffdev.diff.shared.helpers;
 
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;

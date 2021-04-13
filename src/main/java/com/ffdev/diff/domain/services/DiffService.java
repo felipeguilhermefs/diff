@@ -11,11 +11,11 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import static com.ffdev.diff.configs.CacheConfig.DIFF_CACHE;
+import static com.ffdev.diff.shared.configs.CacheConfig.DIFF_CACHE;
 import static com.ffdev.diff.domain.enums.Side.LEFT;
 import static com.ffdev.diff.domain.enums.Side.RIGHT;
-import static com.ffdev.diff.helpers.Base64Helper.decodeB64;
-import static com.ffdev.diff.helpers.JSONHelper.isValidJSON;
+import static com.ffdev.diff.shared.helpers.Base64Helper.decodeB64;
+import static com.ffdev.diff.shared.helpers.JSONHelper.isValidJSON;
 
 @Service
 public class DiffService {

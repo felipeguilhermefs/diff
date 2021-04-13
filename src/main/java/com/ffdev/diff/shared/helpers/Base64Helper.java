@@ -1,4 +1,4 @@
-package com.ffdev.diff.helpers;
+package com.ffdev.diff.shared.helpers;
 
 import com.ffdev.diff.domain.exceptions.InvalidBase64Exception;
 

@@ -18,7 +18,7 @@ import java.util.Optional;
 import static com.ffdev.diff.api.enums.DiffResult.EQUAL;
 import static com.ffdev.diff.domain.enums.Side.LEFT;
 import static com.ffdev.diff.domain.enums.Side.RIGHT;
-import static com.ffdev.diff.helpers.Base64Helper.encodeB64;
+import static com.ffdev.diff.shared.helpers.Base64Helper.encodeB64;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

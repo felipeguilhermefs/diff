@@ -3,7 +3,7 @@ package com.ffdev.diff.api.controllers;
 import com.ffdev.diff.api.dtos.DiffResponse;
 import com.ffdev.diff.api.dtos.ErrorResponse;
 import com.ffdev.diff.domain.enums.Side;
-import com.ffdev.diff.helpers.AbstractRedisIT;
+import com.ffdev.diff.shared.helpers.AbstractRedisIT;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import static com.ffdev.diff.api.enums.ErrorCode.*;
 import static com.ffdev.diff.api.enums.DiffResult.*;
 import static com.ffdev.diff.domain.enums.Side.LEFT;
 import static com.ffdev.diff.domain.enums.Side.RIGHT;
-import static com.ffdev.diff.helpers.Base64Helper.encodeB64;
+import static com.ffdev.diff.shared.helpers.Base64Helper.encodeB64;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Diff API")
