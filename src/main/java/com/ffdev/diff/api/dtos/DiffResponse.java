@@ -8,14 +8,14 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public record ResponseDTO(String result, List<DifferenceDTO> differences) {
+public record DiffResponse(String result, List<Difference> differences) {
 
-    public static ResponseDTO from(Diff diff) {
+    public static DiffResponse from(Diff diff) {
         var differences = diff.differences()
                 .stream()
-                .map(d -> new DifferenceDTO(d.offset(), d.length()))
+                .map(d -> new Difference(d.offset(), d.length()))
                 .collect(toList());
 
-        return new ResponseDTO(diff.result().name(), differences);
+        return new DiffResponse(diff.result().name(), differences);
     }
 }

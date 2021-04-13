@@ -10,12 +10,13 @@
     </parent>
     <groupId>com.ffdev</groupId>
     <artifactId>diff</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>diff</name>
     <description>Assigment Scalable Web</description>
     <properties>
         <java.version>16</java.version>
         <jetbrains.annotations.version>20.1.0</jetbrains.annotations.version>
+        <springdoc.version>1.5.7</springdoc.version>
     </properties>
     <dependencies>
         <dependency>
@@ -39,6 +40,11 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <dependency>

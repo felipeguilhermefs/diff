@@ -1,6 +1,6 @@
 package com.ffdev.diff.api.controllers;
 
-import com.ffdev.diff.api.dtos.ErrorDTO;
+import com.ffdev.diff.api.dtos.ErrorResponse;
 import com.ffdev.diff.api.enums.ErrorCode;
 import com.ffdev.diff.domain.enums.Side;
 import com.ffdev.diff.domain.exceptions.DiffSideNotFoundException;
@@ -19,25 +19,25 @@ public class DiffExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DiffSideNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ErrorDTO handleDiffSideNotFoundException(DiffSideNotFoundException ex) {
+    public ErrorResponse handleDiffSideNotFoundException(DiffSideNotFoundException ex) {
         var errorCode = ex.getSide().equals(Side.LEFT)
                 ? ErrorCode.LEFT_NOT_FOUND
                 : ErrorCode.RIGHT_NOT_FOUND;
 
-        return new ErrorDTO(errorCode, ex.getMessage());
+        return new ErrorResponse(errorCode, ex.getMessage());
     }
 
     @ExceptionHandler(InvalidBase64Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorDTO handleInvalidBase64Exception(InvalidBase64Exception ex) {
-        return new ErrorDTO(ErrorCode.BASE64_INVALID, ex.getMessage());
+    public ErrorResponse handleInvalidBase64Exception(InvalidBase64Exception ex) {
+        return new ErrorResponse(ErrorCode.BASE64_INVALID, ex.getMessage());
     }
 
     @ExceptionHandler(InvalidJsonException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorDTO handleInvalidJsonException(InvalidJsonException ex) {
-        return new ErrorDTO(ErrorCode.JSON_INVALID, ex.getMessage());
+    public ErrorResponse handleInvalidJsonException(InvalidJsonException ex) {
+        return new ErrorResponse(ErrorCode.JSON_INVALID, ex.getMessage());
     }
 }
