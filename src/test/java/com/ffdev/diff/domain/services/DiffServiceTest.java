@@ -1,11 +1,11 @@
 package com.ffdev.diff.domain.services;
 
+import com.ffdev.diff.api.dtos.DiffResponse;
+import com.ffdev.diff.api.dtos.Difference;
 import com.ffdev.diff.domain.exceptions.DiffSideNotFoundException;
 import com.ffdev.diff.domain.exceptions.InvalidBase64Exception;
 import com.ffdev.diff.domain.exceptions.InvalidJsonException;
-import com.ffdev.diff.domain.models.Diff;
 import com.ffdev.diff.domain.models.DiffSide;
-import com.ffdev.diff.domain.models.Difference;
 import com.ffdev.diff.domain.repositories.DiffSideRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +15,7 @@ import org.mockito.Mock;
 
 import java.util.Optional;
 
-import static com.ffdev.diff.domain.enums.DiffResult.EQUAL;
+import static com.ffdev.diff.api.enums.DiffResult.EQUAL;
 import static com.ffdev.diff.domain.enums.Side.LEFT;
 import static com.ffdev.diff.domain.enums.Side.RIGHT;
 import static com.ffdev.diff.helpers.Base64Helper.encodeB64;
@@ -150,7 +150,7 @@ class DiffServiceTest {
             var testId = "any-id";
             var testData = "any-data";
 
-            var expectedDiff = new Diff(EQUAL, singletonList(new Difference(30L, 6L)));
+            var expectedDiff = new DiffResponse(EQUAL, singletonList(new Difference(30L, 6L)));
             when(checkService.getDiff(eq(testData), eq(testData)))
                     .thenReturn(expectedDiff);
 

@@ -1,9 +1,9 @@
 package com.ffdev.diff.domain.services;
 
+import com.ffdev.diff.api.dtos.DiffResponse;
 import com.ffdev.diff.domain.enums.Side;
 import com.ffdev.diff.domain.exceptions.DiffSideNotFoundException;
 import com.ffdev.diff.domain.exceptions.InvalidJsonException;
-import com.ffdev.diff.domain.models.Diff;
 import com.ffdev.diff.domain.models.DiffSide;
 import com.ffdev.diff.domain.repositories.DiffSideRepository;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,7 @@ public class DiffService {
     }
 
     @Cacheable(value = DIFF_CACHE, key = "#id")
-    public Diff getById(@NotNull String id) {
+    public DiffResponse getById(@NotNull String id) {
         var left = getSide(LEFT, id);
         var right = getSide(RIGHT, id);
 

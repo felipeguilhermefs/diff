@@ -1,10 +1,9 @@
 package com.ffdev.diff.domain.services;
 
-import com.ffdev.diff.domain.models.Diff;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.ffdev.diff.domain.enums.DiffResult.*;
+import static com.ffdev.diff.api.enums.DiffResult.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

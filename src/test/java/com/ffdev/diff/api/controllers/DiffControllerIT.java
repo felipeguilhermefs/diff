@@ -1,7 +1,7 @@
 package com.ffdev.diff.api.controllers;
 
-import com.ffdev.diff.api.dtos.ErrorResponse;
 import com.ffdev.diff.api.dtos.DiffResponse;
+import com.ffdev.diff.api.dtos.ErrorResponse;
 import com.ffdev.diff.domain.enums.Side;
 import com.ffdev.diff.helpers.AbstractRedisIT;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.UUID;
 
 import static com.ffdev.diff.api.enums.ErrorCode.*;
+import static com.ffdev.diff.api.enums.DiffResult.*;
 import static com.ffdev.diff.domain.enums.Side.LEFT;
 import static com.ffdev.diff.domain.enums.Side.RIGHT;
 import static com.ffdev.diff.helpers.Base64Helper.encodeB64;
@@ -139,7 +140,7 @@ class DiffControllerIT extends AbstractRedisIT {
 
         DiffResponse diff = response.getBody();
         assertNotNull(diff);
-        assertEquals("EQUAL", diff.result());
+        assertEquals(EQUAL, diff.result());
         assertTrue(diff.differences().isEmpty());
     }
 
@@ -158,7 +159,7 @@ class DiffControllerIT extends AbstractRedisIT {
 
         DiffResponse diff = response.getBody();
         assertNotNull(diff);
-        assertEquals("DIFFERENT_SIZES", diff.result());
+        assertEquals(DIFFERENT_SIZES, diff.result());
         assertTrue(diff.differences().isEmpty());
     }
 
@@ -179,7 +180,7 @@ class DiffControllerIT extends AbstractRedisIT {
 
         DiffResponse diff = response.getBody();
         assertNotNull(diff);
-        assertEquals("DIFFERENT", diff.result());
+        assertEquals(DIFFERENT, diff.result());
         assertEquals(3, diff.differences().size());
         assertEquals(6L, diff.differences().get(0).offset());
         assertEquals(2L, diff.differences().get(0).length());
@@ -221,7 +222,7 @@ class DiffControllerIT extends AbstractRedisIT {
 
         DiffResponse diff = response.getBody();
         assertNotNull(diff);
-        assertEquals("EQUAL", diff.result());
+        assertEquals(EQUAL, diff.result());
 
         String otherData = "{\"id\":123,\"message\":\"other json\"}";
         assertEquals(HttpStatus.ACCEPTED, postEncoded(LEFT, testId, otherData));
@@ -231,7 +232,7 @@ class DiffControllerIT extends AbstractRedisIT {
 
         DiffResponse newDiff = newResponse.getBody();
         assertNotNull(newDiff);
-        assertEquals("DIFFERENT_SIZES", newDiff.result());
+        assertEquals(DIFFERENT_SIZES, newDiff.result());
     }
 
     @Test

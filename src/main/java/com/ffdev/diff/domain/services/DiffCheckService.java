@@ -1,14 +1,14 @@
 package com.ffdev.diff.domain.services;
 
-import com.ffdev.diff.domain.models.Diff;
-import com.ffdev.diff.domain.models.Difference;
+import com.ffdev.diff.api.dtos.DiffResponse;
+import com.ffdev.diff.api.dtos.Difference;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ffdev.diff.domain.enums.DiffResult.*;
+import static com.ffdev.diff.api.enums.DiffResult.*;
 import static java.util.Collections.emptyList;
 
 @Service
@@ -17,17 +17,17 @@ public class DiffCheckService {
     /**
      * getDiff linearly compares two strings and returns information of side-by-side differences
      */
-    public Diff getDiff(@NotNull String left, @NotNull String right) {
+    public DiffResponse getDiff(@NotNull String left, @NotNull String right) {
 
         if (left.length() != right.length()) {
-            return new Diff(DIFFERENT_SIZES, emptyList());
+            return new DiffResponse(DIFFERENT_SIZES, emptyList());
         }
 
         if (left.equals(right)) {
-            return new Diff(EQUAL, emptyList());
+            return new DiffResponse(EQUAL, emptyList());
         }
 
-        return new Diff(DIFFERENT, getChanges(left, right));
+        return new DiffResponse(DIFFERENT, getChanges(left, right));
     }
 
     private List<Difference> getChanges(String left, String right) {

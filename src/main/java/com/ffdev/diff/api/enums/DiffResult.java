@@ -1,4 +1,4 @@
-package com.ffdev.diff.domain.enums;
+package com.ffdev.diff.api.enums;
 
 public enum DiffResult {
     DIFFERENT,
