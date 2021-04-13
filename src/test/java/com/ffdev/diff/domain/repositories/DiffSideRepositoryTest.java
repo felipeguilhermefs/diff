@@ -1,7 +1,7 @@
 package com.ffdev.diff.domain.repositories;
 
 import com.ffdev.diff.domain.models.DiffSide;
-import org.junit.jupiter.api.AfterEach;
+import com.ffdev.diff.helpers.AbstractRedisIT;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -11,12 +11,9 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -25,10 +22,8 @@ import static com.ffdev.diff.domain.enums.Side.RIGHT;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@SpringBootTest
-@ActiveProfiles("test")
 @DisplayName("Diff Side Repository")
-class DiffSideRepositoryTest {
+class DiffSideRepositoryTest extends AbstractRedisIT {
 
     @Value("${diff.cache.ttl-minutes}")
     private long timeToLive;
@@ -38,14 +33,6 @@ class DiffSideRepositoryTest {
 
     @Autowired
     private DiffSideRepository repository;
-
-    @AfterEach
-    public void cleanup() {
-        Set<String> allKeys = redisTemplate.keys("*");
-        if (allKeys != null) {
-            redisTemplate.delete(allKeys);
-        }
-    }
 
     @Nested
     @DisplayName("when saving a diff side")

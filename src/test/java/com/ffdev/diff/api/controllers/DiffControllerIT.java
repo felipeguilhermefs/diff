@@ -3,20 +3,18 @@ package com.ffdev.diff.api.controllers;
 import com.ffdev.diff.api.dtos.ErrorDTO;
 import com.ffdev.diff.api.dtos.ResponseDTO;
 import com.ffdev.diff.domain.enums.Side;
-import org.junit.jupiter.api.AfterEach;
+import com.ffdev.diff.helpers.AbstractRedisIT;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Set;
 import java.util.UUID;
 
 import static com.ffdev.diff.api.enums.ErrorCode.*;
@@ -25,27 +23,14 @@ import static com.ffdev.diff.domain.enums.Side.RIGHT;
 import static com.ffdev.diff.helpers.Base64Helper.encodeB64;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
 @DisplayName("Diff API")
-class DiffControllerIT {
+class DiffControllerIT extends AbstractRedisIT {
 
     @LocalServerPort
     private int port;
 
     @Autowired
     private TestRestTemplate restTemplate;
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
-    @AfterEach
-    public void cleanup() {
-        Set<String> allKeys = redisTemplate.keys("*");
-        if (allKeys != null) {
-            redisTemplate.delete(allKeys);
-        }
-    }
 
     @Test
     @DisplayName("should return 409 if left side is not Base64")
