@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
- * {@link AbstractRedisIT} base test class to be extended when redis integration tests are needed
+ * {@link AbstractRedisIT} base test class to be extended when redis integration tests are needed.
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
