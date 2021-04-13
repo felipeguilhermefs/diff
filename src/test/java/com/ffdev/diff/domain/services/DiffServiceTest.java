@@ -51,8 +51,8 @@ class DiffServiceTest {
         @Test
         @DisplayName("should persist received data")
         public void shouldPersist() {
-            String testId = "any-id";
-            String testData = "{\"id\":123,\"message\":\"any json\"}";
+            var testId = "any-id";
+            var testData = "{\"id\":123,\"message\":\"any json\"}";
 
             service.saveLeft(testId, encodeB64(testData));
 
@@ -62,8 +62,8 @@ class DiffServiceTest {
         @Test
         @DisplayName("should thrown error if data is not Base64")
         public void shouldThrowB64Exception() {
-            String testId = "any-id";
-            String testData = "{\"id\":123,\"message\":\"any json\"}";
+            var testId = "any-id";
+            var testData = "{\"id\":123,\"message\":\"any json\"}";
 
             assertThrows(InvalidBase64Exception.class, () -> service.saveLeft(testId, testData));
 
@@ -73,8 +73,8 @@ class DiffServiceTest {
         @Test
         @DisplayName("should thrown error if data is not JSON")
         public void shouldThrowJSONException() {
-            String testId = "any-id";
-            String testData = "any-data";
+            var testId = "any-id";
+            var testData = "any-data";
 
             assertThrows(InvalidJsonException.class, () -> service.saveLeft(testId, encodeB64(testData)));
 
@@ -89,8 +89,8 @@ class DiffServiceTest {
         @Test
         @DisplayName("should persist received data")
         public void shouldPersist() {
-            String testId = "any-id";
-            String testData = "{\"id\":123,\"message\":\"any json\"}";
+            var testId = "any-id";
+            var testData = "{\"id\":123,\"message\":\"any json\"}";
 
             service.saveRight(testId, encodeB64(testData));
 
@@ -100,8 +100,8 @@ class DiffServiceTest {
         @Test
         @DisplayName("should thrown error if data is not Base64")
         public void shouldThrowB64Exception() {
-            String testId = "any-id";
-            String testData = "{\"id\":123,\"message\":\"any json\"}";
+            var testId = "any-id";
+            var testData = "{\"id\":123,\"message\":\"any json\"}";
 
             assertThrows(InvalidBase64Exception.class, () -> service.saveRight(testId, testData));
 
@@ -111,8 +111,8 @@ class DiffServiceTest {
         @Test
         @DisplayName("should thrown error if data is not JSON")
         public void shouldThrowJSONException() {
-            String testId = "any-id";
-            String testData = "any-data";
+            var testId = "any-id";
+            var testData = "any-data";
 
             assertThrows(InvalidJsonException.class, () -> service.saveRight(testId, encodeB64(testData)));
 
@@ -127,7 +127,7 @@ class DiffServiceTest {
         @Test
         @DisplayName("should throw an exception if left side is not found")
         public void shouldThrowNotFoundForLeftSides() {
-            String testId = "any-id";
+            var testId = "any-id";
 
             withDiffSides(testId, null, "some-data");
 
@@ -137,7 +137,7 @@ class DiffServiceTest {
         @Test
         @DisplayName("should throw an exception if right side is not found")
         public void shouldThrowNotFoundForRightSides() {
-            String testId = "any-id";
+            var testId = "any-id";
 
             withDiffSides(testId, "some-data", null);
 
@@ -147,10 +147,10 @@ class DiffServiceTest {
         @Test
         @DisplayName("should return diff when both sides are present")
         public void shouldReturnDiff() {
-            String testId = "any-id";
-            String testData = "any-data";
+            var testId = "any-id";
+            var testData = "any-data";
 
-            Diff expectedDiff = new Diff(EQUAL, singletonList(new Difference(30L, 6L)));
+            var expectedDiff = new Diff(EQUAL, singletonList(new Difference(30L, 6L)));
             when(checkService.getDiff(eq(testData), eq(testData)))
                     .thenReturn(expectedDiff);
 

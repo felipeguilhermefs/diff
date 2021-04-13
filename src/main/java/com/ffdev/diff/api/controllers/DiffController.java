@@ -31,7 +31,7 @@ public class DiffController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO> getDiff(@PathVariable String id) {
-        ResponseDTO reponse = ResponseDTO.from(service.getById(id));
+        var reponse = ResponseDTO.from(service.getById(id));
         return ResponseEntity.ok(reponse);
     }
 }

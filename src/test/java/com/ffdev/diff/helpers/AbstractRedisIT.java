@@ -6,8 +6,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Set;
-
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
@@ -24,7 +22,7 @@ public abstract class AbstractRedisIT {
 
     @AfterEach
     public void cleanup() {
-        Set<String> allKeys = redisTemplate.keys("*");
+        var allKeys = redisTemplate.keys("*");
         if (allKeys != null) {
             redisTemplate.delete(allKeys);
         }

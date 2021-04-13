@@ -30,13 +30,13 @@ public class DiffSideRepository {
      * Given its current transient nature that data will be stored for a limited amount of time.
      */
     public void save(@NotNull DiffSide diffSide) {
-        String key = getKey(diffSide.id(), diffSide.side());
+        var key = getKey(diffSide.id(), diffSide.side());
         redisTemplate.opsForValue().set(key, diffSide.data(), timeToLive, TimeUnit.MINUTES);
     }
 
     public Optional<String> getById(@NotNull Side side, @NotNull String id) {
-        String key = getKey(id, side);
-        String data = redisTemplate.opsForValue().get(key);
+        var key = getKey(id, side);
+        var data = redisTemplate.opsForValue().get(key);
         return Optional.ofNullable(data);
     }
 

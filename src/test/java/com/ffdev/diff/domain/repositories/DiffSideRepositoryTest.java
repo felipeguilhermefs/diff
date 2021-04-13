@@ -45,7 +45,7 @@ class DiffSideRepositoryTest extends AbstractRedisIT {
 
             repository.save(testData);
 
-            String dataSaved = redisTemplate.opsForValue().get(testKey);
+            var dataSaved = redisTemplate.opsForValue().get(testKey);
 
             assertEquals(testData.data(), dataSaved);
         }
@@ -57,7 +57,7 @@ class DiffSideRepositoryTest extends AbstractRedisIT {
 
             repository.save(testData);
 
-            Long remainingMinutes = redisTemplate.getExpire(testKey, TimeUnit.MINUTES);
+            var remainingMinutes = redisTemplate.getExpire(testKey, TimeUnit.MINUTES);
 
             assertNotNull(remainingMinutes);
             assertTrue(remainingMinutes <= timeToLive);
@@ -74,7 +74,7 @@ class DiffSideRepositoryTest extends AbstractRedisIT {
         public void shouldFind(String testKey, DiffSide testData) {
             redisTemplate.opsForValue().set(testKey, testData.data());
 
-            Optional<String> dataRetrieved = repository.getById(testData.side(), testData.id());
+            var dataRetrieved = repository.getById(testData.side(), testData.id());
 
             assertTrue(dataRetrieved.isPresent());
             assertEquals(testData.data(), dataRetrieved.get());
@@ -86,7 +86,7 @@ class DiffSideRepositoryTest extends AbstractRedisIT {
         public void shouldNotFind(String testKey, DiffSide testData) {
             redisTemplate.delete(testKey);
 
-            Optional<String> dataRetrieved = repository.getById(testData.side(), testData.id());
+            var dataRetrieved = repository.getById(testData.side(), testData.id());
 
             assertFalse(dataRetrieved.isPresent());
         }

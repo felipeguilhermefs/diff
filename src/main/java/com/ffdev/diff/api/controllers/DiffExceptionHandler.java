@@ -20,11 +20,11 @@ public class DiffExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorDTO handleDiffSideNotFoundException(DiffSideNotFoundException ex) {
-        ErrorCode code = ex.getSide().equals(Side.LEFT)
+        var errorCode = ex.getSide().equals(Side.LEFT)
                 ? ErrorCode.LEFT_NOT_FOUND
                 : ErrorCode.RIGHT_NOT_FOUND;
 
-        return new ErrorDTO(code, ex.getMessage());
+        return new ErrorDTO(errorCode, ex.getMessage());
     }
 
     @ExceptionHandler(InvalidBase64Exception.class)

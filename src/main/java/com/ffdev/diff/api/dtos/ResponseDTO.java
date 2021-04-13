@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.toList;
 public record ResponseDTO(String result, List<DifferenceDTO> differences) {
 
     public static ResponseDTO from(Diff diff) {
-        List<DifferenceDTO> differences = diff.differences()
+        var differences = diff.differences()
                 .stream()
                 .map(d -> new DifferenceDTO(d.offset(), d.length()))
                 .collect(toList());

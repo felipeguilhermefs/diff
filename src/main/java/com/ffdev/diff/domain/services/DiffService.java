@@ -39,7 +39,7 @@ public class DiffService {
     }
 
     private void save(Side side, String id, String data) {
-        String decodedData = decodeB64(data);
+        var decodedData = decodeB64(data);
 
         if (!isValidJSON(decodedData)) {
             throw new InvalidJsonException();
@@ -50,8 +50,8 @@ public class DiffService {
 
     @Cacheable(value = DIFF_CACHE, key = "#id")
     public Diff getById(@NotNull String id) {
-        String left = getSide(LEFT, id);
-        String right = getSide(RIGHT, id);
+        var left = getSide(LEFT, id);
+        var right = getSide(RIGHT, id);
 
         return checkService.getDiff(left, right);
     }
