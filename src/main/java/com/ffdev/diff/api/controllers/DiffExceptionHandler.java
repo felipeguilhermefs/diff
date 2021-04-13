@@ -2,7 +2,7 @@ package com.ffdev.diff.api.controllers;
 
 import com.ffdev.diff.api.dtos.ErrorDTO;
 import com.ffdev.diff.api.enums.ErrorCode;
-import com.ffdev.diff.domain.enums.DiffSide;
+import com.ffdev.diff.domain.enums.Side;
 import com.ffdev.diff.domain.exceptions.DiffSideNotFoundException;
 import com.ffdev.diff.domain.exceptions.InvalidBase64Exception;
 import com.ffdev.diff.domain.exceptions.InvalidJsonException;
@@ -20,7 +20,7 @@ public class DiffExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorDTO handleDiffSideNotFoundException(DiffSideNotFoundException ex) {
-        ErrorCode code = ex.getSide().equals(DiffSide.LEFT)
+        ErrorCode code = ex.getSide().equals(Side.LEFT)
                 ? ErrorCode.LEFT_NOT_FOUND
                 : ErrorCode.RIGHT_NOT_FOUND;
 

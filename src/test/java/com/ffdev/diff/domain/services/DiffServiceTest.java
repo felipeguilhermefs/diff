@@ -1,10 +1,10 @@
 package com.ffdev.diff.domain.services;
 
-import com.ffdev.diff.domain.enums.DiffSide;
 import com.ffdev.diff.domain.exceptions.DiffSideNotFoundException;
 import com.ffdev.diff.domain.exceptions.InvalidBase64Exception;
 import com.ffdev.diff.domain.exceptions.InvalidJsonException;
 import com.ffdev.diff.domain.models.Diff;
+import com.ffdev.diff.domain.models.DiffSide;
 import com.ffdev.diff.domain.models.Difference;
 import com.ffdev.diff.domain.repositories.DiffSideRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import java.util.Optional;
 
 import static com.ffdev.diff.domain.enums.DiffResult.EQUAL;
+import static com.ffdev.diff.domain.enums.Side.LEFT;
+import static com.ffdev.diff.domain.enums.Side.RIGHT;
 import static com.ffdev.diff.helpers.Base64Helper.encodeB64;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +56,7 @@ class DiffServiceTest {
 
             service.saveLeft(testId, encodeB64(testData));
 
-            verify(sideRepository).save(eq(DiffSide.LEFT), eq(testId), eq(testData));
+            verify(sideRepository).save(eq(new DiffSide(LEFT, testId, testData)));
         }
 
         @Test
@@ -92,7 +94,7 @@ class DiffServiceTest {
 
             service.saveRight(testId, encodeB64(testData));
 
-            verify(sideRepository).save(eq(DiffSide.RIGHT), eq(testId), eq(testData));
+            verify(sideRepository).save(eq(new DiffSide(RIGHT, testId, testData)));
         }
 
         @Test
@@ -158,10 +160,10 @@ class DiffServiceTest {
         }
 
         private void withDiffSides(String id, String left, String right) {
-            when(sideRepository.getById(eq(DiffSide.LEFT), eq(id)))
+            when(sideRepository.getById(eq(LEFT), eq(id)))
                     .thenReturn(Optional.ofNullable(left));
 
-            when(sideRepository.getById(eq(DiffSide.RIGHT), eq(id)))
+            when(sideRepository.getById(eq(RIGHT), eq(id)))
                     .thenReturn(Optional.ofNullable(right));
         }
     }

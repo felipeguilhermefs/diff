@@ -1,6 +1,6 @@
 package com.ffdev.diff.domain.repositories;
 
-import com.ffdev.diff.domain.enums.DiffSide;
+import com.ffdev.diff.domain.models.DiffSide;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import static com.ffdev.diff.domain.enums.Side.LEFT;
+import static com.ffdev.diff.domain.enums.Side.RIGHT;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -52,21 +54,21 @@ class DiffSideRepositoryTest {
         @ParameterizedTest
         @ArgumentsSource(TestDataProvider.class)
         @DisplayName("should save diff side in a specific key")
-        public void shouldSave(String testKey, DiffSide side, String id, String data) {
+        public void shouldSave(String testKey, DiffSide testData) {
 
-            repository.save(side, id, data);
+            repository.save(testData);
 
             String dataSaved = redisTemplate.opsForValue().get(testKey);
 
-            assertEquals(data, dataSaved);
+            assertEquals(testData.data(), dataSaved);
         }
 
         @ParameterizedTest
         @ArgumentsSource(TestDataProvider.class)
         @DisplayName("should set a expiration time to left side data")
-        public void shouldExpire(String testKey, DiffSide side, String id, String data) {
+        public void shouldExpire(String testKey, DiffSide testData) {
 
-            repository.save(side, id, data);
+            repository.save(testData);
 
             Long remainingMinutes = redisTemplate.getExpire(testKey, TimeUnit.MINUTES);
 
@@ -82,22 +84,22 @@ class DiffSideRepositoryTest {
         @ParameterizedTest
         @ArgumentsSource(TestDataProvider.class)
         @DisplayName("should find a specific key")
-        public void shouldFind(String testKey, DiffSide side, String id, String data) {
-            redisTemplate.opsForValue().set(testKey, data);
+        public void shouldFind(String testKey, DiffSide testData) {
+            redisTemplate.opsForValue().set(testKey, testData.data());
 
-            Optional<String> dataRetrieved = repository.getById(side, id);
+            Optional<String> dataRetrieved = repository.getById(testData.side(), testData.id());
 
             assertTrue(dataRetrieved.isPresent());
-            assertEquals(data, dataRetrieved.get());
+            assertEquals(testData.data(), dataRetrieved.get());
         }
 
         @ParameterizedTest
         @ArgumentsSource(TestDataProvider.class)
         @DisplayName("should not find a key if it does not exists")
-        public void shouldNotFind(String testKey, DiffSide side, String id, String data) {
+        public void shouldNotFind(String testKey, DiffSide testData) {
             redisTemplate.delete(testKey);
 
-            Optional<String> dataRetrieved = repository.getById(side, id);
+            Optional<String> dataRetrieved = repository.getById(testData.side(), testData.id());
 
             assertFalse(dataRetrieved.isPresent());
         }
@@ -110,27 +112,35 @@ class DiffSideRepositoryTest {
             return Stream.of(
                     arguments(
                             "diff:07649074-2494-4643-b557-b48c038b789c:left",
-                            DiffSide.LEFT,
-                            "07649074-2494-4643-b557-b48c038b789c",
-                            "{\"id\":123,\"message\":\"some json\"}"
+                            new DiffSide(
+                                    LEFT,
+                                    "07649074-2494-4643-b557-b48c038b789c",
+                                    "{\"id\":123,\"message\":\"some json\"}"
+                            )
                     ),
                     arguments(
                             "diff:c07e5519-2c35-484e-aed9-d56770acf9c7:right",
-                            DiffSide.RIGHT,
-                            "c07e5519-2c35-484e-aed9-d56770acf9c7",
-                            "some plain text"
+                            new DiffSide(
+                                    RIGHT,
+                                    "c07e5519-2c35-484e-aed9-d56770acf9c7",
+                                    "some plain text"
+                            )
                     ),
                     arguments(
                             "diff:403c1d9c-5e2e-401d-935b-e1f3a25531a8:right",
-                            DiffSide.RIGHT,
-                            "403c1d9c-5e2e-401d-935b-e1f3a25531a8",
-                            "<html><head></head><body><h1>some html</h1></body></html>"
+                            new DiffSide(
+                                    RIGHT,
+                                    "403c1d9c-5e2e-401d-935b-e1f3a25531a8",
+                                    "<html><head></head><body><h1>some html</h1></body></html>"
+                            )
                     ),
                     arguments(
                             "diff:1fc71390-4027-4d9d-8136-58a9c495c98e:left",
-                            DiffSide.LEFT,
-                            "1fc71390-4027-4d9d-8136-58a9c495c98e",
-                            "7B2EUCQfTVqbDyEYySKs444Gex/SxMewVBP5MPbS3ktgmxwwzGEaB"
+                            new DiffSide(
+                                    LEFT,
+                                    "1fc71390-4027-4d9d-8136-58a9c495c98e",
+                                    "7B2EUCQfTVqbDyEYySKs444Gex/SxMewVBP5MPbS3ktgmxwwzGEaB"
+                            )
                     )
             );
         }

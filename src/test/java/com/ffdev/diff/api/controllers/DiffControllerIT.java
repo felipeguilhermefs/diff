@@ -2,7 +2,7 @@ package com.ffdev.diff.api.controllers;
 
 import com.ffdev.diff.api.dtos.ErrorDTO;
 import com.ffdev.diff.api.dtos.ResponseDTO;
-import com.ffdev.diff.domain.enums.DiffSide;
+import com.ffdev.diff.domain.enums.Side;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.ffdev.diff.api.enums.ErrorCode.*;
-import static com.ffdev.diff.domain.enums.DiffSide.LEFT;
-import static com.ffdev.diff.domain.enums.DiffSide.RIGHT;
+import static com.ffdev.diff.domain.enums.Side.LEFT;
+import static com.ffdev.diff.domain.enums.Side.RIGHT;
 import static com.ffdev.diff.helpers.Base64Helper.encodeB64;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -279,7 +279,7 @@ class DiffControllerIT {
         );
     }
 
-    private HttpStatus postEncoded(DiffSide side, String id, String data) {
+    private HttpStatus postEncoded(Side side, String id, String data) {
         HttpEntity<String> body = new HttpEntity<>(encodeB64(data));
 
         return restTemplate.postForEntity(
@@ -290,7 +290,7 @@ class DiffControllerIT {
         ).getStatusCode();
     }
 
-    private ResponseEntity<ErrorDTO> postError(DiffSide side, String id, String data) {
+    private ResponseEntity<ErrorDTO> postError(Side side, String id, String data) {
         HttpEntity<String> body = new HttpEntity<>(data);
 
         return restTemplate.postForEntity(
