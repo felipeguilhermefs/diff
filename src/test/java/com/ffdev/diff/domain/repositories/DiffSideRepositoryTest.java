@@ -1,6 +1,6 @@
 package com.ffdev.diff.domain.repositories;
 
-import com.ffdev.diff.domain.models.DiffSide;
+import com.ffdev.diff.domain.entities.DiffSide;
 import com.ffdev.diff.shared.helpers.AbstractRedisIT;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -73,7 +73,7 @@ class DiffSideRepositoryTest extends AbstractRedisIT {
         public void shouldFind(String testKey, DiffSide testData) {
             redisTemplate.opsForValue().set(testKey, testData.data());
 
-            var dataRetrieved = repository.getById(testData.side(), testData.id());
+            var dataRetrieved = repository.fetchDataBySideAndDiffId(testData.side(), testData.diffId());
 
             assertTrue(dataRetrieved.isPresent());
             assertEquals(testData.data(), dataRetrieved.get());
@@ -85,7 +85,7 @@ class DiffSideRepositoryTest extends AbstractRedisIT {
         public void shouldNotFind(String testKey, DiffSide testData) {
             redisTemplate.delete(testKey);
 
-            var dataRetrieved = repository.getById(testData.side(), testData.id());
+            var dataRetrieved = repository.fetchDataBySideAndDiffId(testData.side(), testData.diffId());
 
             assertFalse(dataRetrieved.isPresent());
         }

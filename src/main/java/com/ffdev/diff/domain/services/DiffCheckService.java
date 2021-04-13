@@ -11,11 +11,18 @@ import java.util.List;
 import static com.ffdev.diff.api.enums.DiffResult.*;
 import static java.util.Collections.emptyList;
 
+/**
+ * {@link DiffService} abstracts the diff algorithm.
+ */
 @Service
 public class DiffCheckService {
 
     /**
-     * getDiff linearly compares two strings and returns information of side-by-side differences
+     * Compares two strings and returns differences.
+     *
+     * @param left  left side comparison data
+     * @param right right side comparison data
+     * @return diff results
      */
     public DiffResponse getDiff(@NotNull String left, @NotNull String right) {
 
@@ -27,33 +34,37 @@ public class DiffCheckService {
             return new DiffResponse(EQUAL, emptyList());
         }
 
-        return new DiffResponse(DIFFERENT, getChanges(left, right));
+        return new DiffResponse(DIFFERENT, calculateDiff(left, right));
     }
 
-    private List<Difference> getChanges(String left, String right) {
-        List<Difference> differences = new ArrayList<>();
-        long diffOffset = 0;
-        boolean currentlyInDiff = false;
+    /**
+     * Linearly compares two strings (char-by-char) and accumulate offsets of each diff occurrence
+     */
+    private List<Difference> calculateDiff(String left, String right) {
+        var differences = new ArrayList<Difference>();
+        var diffOffset = 0L;
+        var accumulating = false;
 
         for (int offset = 0; offset < left.length(); offset++) {
 
-            boolean isDifferent = left.charAt(offset) != right.charAt(offset);
+            var isDifferent = left.charAt(offset) != right.charAt(offset);
 
-            boolean beginsDiff = isDifferent && !currentlyInDiff;
-            if (beginsDiff) {
+            //Begins a diff
+            if (isDifferent && !accumulating) {
                 diffOffset = offset;
-                currentlyInDiff = true;
+                accumulating = true;
                 continue;
             }
 
-            boolean endsDiff = !isDifferent && currentlyInDiff;
-            if (endsDiff) {
+            //Ends a diff
+            if (!isDifferent && accumulating) {
                 differences.add(new Difference(diffOffset, offset - diffOffset));
-                currentlyInDiff = false;
+                accumulating = false;
             }
         }
 
-        if (currentlyInDiff) {
+        //When it is still accumulating means that the rest belongs to this diff
+        if (accumulating) {
             differences.add(new Difference(diffOffset, left.length() - diffOffset));
         }
 

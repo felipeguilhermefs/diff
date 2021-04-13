@@ -5,7 +5,7 @@ import com.ffdev.diff.api.dtos.Difference;
 import com.ffdev.diff.domain.exceptions.DiffSideNotFoundException;
 import com.ffdev.diff.domain.exceptions.InvalidBase64Exception;
 import com.ffdev.diff.domain.exceptions.InvalidJsonException;
-import com.ffdev.diff.domain.models.DiffSide;
+import com.ffdev.diff.domain.entities.DiffSide;
 import com.ffdev.diff.domain.repositories.DiffSideRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -160,10 +160,10 @@ class DiffServiceTest {
         }
 
         private void withDiffSides(String id, String left, String right) {
-            when(sideRepository.getById(eq(LEFT), eq(id)))
+            when(sideRepository.fetchDataBySideAndDiffId(eq(LEFT), eq(id)))
                     .thenReturn(Optional.ofNullable(left));
 
-            when(sideRepository.getById(eq(RIGHT), eq(id)))
+            when(sideRepository.fetchDataBySideAndDiffId(eq(RIGHT), eq(id)))
                     .thenReturn(Optional.ofNullable(right));
         }
     }
