@@ -2,9 +2,13 @@ package com.ffdev.diff.api.controllers;
 
 import com.ffdev.diff.api.dtos.DiffResponse;
 import com.ffdev.diff.domain.services.DiffService;
-import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.HttpStatus.ACCEPTED;
+
+@Tag(name = "Diff", description = "every diff endpoint")
 @RestController
 @RequestMapping("/v1/diff")
 public class DiffController {
@@ -15,22 +19,38 @@ public class DiffController {
         this.service = service;
     }
 
+    @Operation(
+            summary = "Save left side",
+            description = """
+                    For a given **ID** it will save (for a time) a **base64 encoded JSON** that can be
+                    [compared](#/Diff/getDiff) to the [right side](#/Diff/saveRight).
+                    """)
+    @ResponseStatus(ACCEPTED)
     @PostMapping("/{id}/left")
-    public ResponseEntity<Void> saveLeft(@PathVariable String id, @RequestBody String data) {
+    public void saveLeft(@PathVariable String id, @RequestBody String data) {
         service.saveLeft(id, data);
-
-        return ResponseEntity.accepted().build();
     }
 
-    @PostMapping("/{id}/right")
-    public ResponseEntity<Void> saveRight(@PathVariable String id, @RequestBody String data) {
+    @Operation(
+            summary = "Save right side",
+            description = """
+                    For a given **ID** it will save (for a time) a **base64 encoded JSON** that can be
+                    [compared](#/Diff/getDiff) to the [left side](#/Diff/saveLeft).
+                    """)
+    @ResponseStatus(ACCEPTED)
+    @PostMapping(value = "/{id}/right")
+    public void saveRight(@PathVariable String id, @RequestBody String data) {
         service.saveRight(id, data);
-
-        return ResponseEntity.accepted().build();
     }
 
+    @Operation(
+            summary = "Get diff from left and right",
+            description = """
+                    For a given **ID** it compares JSON data saved to [left](#/Diff/saveLeft)
+                    and [right](#/Diff/saveRight) sides, and returns a side-by-side diff.
+                    """)
     @GetMapping("/{id}")
-    public ResponseEntity<DiffResponse> getDiff(@PathVariable String id) {
-        return ResponseEntity.ok(service.getById(id));
+    public DiffResponse getDiff(@PathVariable String id) {
+        return service.getById(id);
     }
 }

@@ -12,7 +12,7 @@
     <artifactId>diff</artifactId>
     <version>1.0.0</version>
     <name>diff</name>
-    <description>Assigment Scalable Web</description>
+    <description>APIs to verify side-by-side diffs</description>
     <properties>
         <java.version>16</java.version>
         <jetbrains.annotations.version>20.1.0</jetbrains.annotations.version>
