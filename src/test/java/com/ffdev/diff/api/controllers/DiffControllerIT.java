@@ -3,7 +3,7 @@ package com.ffdev.diff.api.controllers;
 import com.ffdev.diff.api.dtos.DiffResponse;
 import com.ffdev.diff.api.dtos.ErrorResponse;
 import com.ffdev.diff.domain.enums.Side;
-import com.ffdev.diff.shared.helpers.AbstractRedisIT;
+import com.ffdev.diff.shared.AbstractRedisIT;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
