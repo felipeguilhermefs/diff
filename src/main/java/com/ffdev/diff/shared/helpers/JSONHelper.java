@@ -3,10 +3,20 @@ package com.ffdev.diff.shared.helpers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
+/**
+ * {@link JSONHelper} static JSON helper methods
+ */
 public class JSONHelper {
 
+    //JsonMapper is thread-safe so it can be initialized statically
     private static final JsonMapper jsonMapper = new JsonMapper();
 
+    /**
+     * Checks if a string is in valid JSON format
+     *
+     * @param data string to be checked
+     * @return (boolean) valid or not
+     */
     public static boolean isValidJSON(String data) {
         try {
             jsonMapper.readTree(data);
