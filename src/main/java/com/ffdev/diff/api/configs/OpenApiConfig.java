@@ -1,4 +1,4 @@
-package com.ffdev.diff.shared.configs;
+package com.ffdev.diff.api.configs;
 
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
