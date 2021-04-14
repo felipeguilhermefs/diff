@@ -213,6 +213,11 @@ Integration tests are done at 2 levels:
 Some level of test redundancy can be viewed as over testing, but I personally find over testing better than under
 testing. This position could be reevaluated if tests becomes a real burden.
 
+#### Random test data
+
+Most test cases uses pseudo-random data to improve test reliability (each run uses different data), and improve
+readability in most cases. In cases where readability could be affected, explicit data is used.
+
 ---
 
 ## Improvements
