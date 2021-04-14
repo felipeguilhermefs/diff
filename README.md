@@ -157,6 +157,7 @@ application, it is really helpful.
 In this project it is used as a transient datasource and for distributed caching,
 meaning that we could have multiple instances of this server, and they would share
 a cache, which makes horizontal scaling easier. Also, Redis can be clustered if needed.
+Some tweaks in **docker-compose.yaml** would be needed to make this possible.
 
 #### OpenAPI and Swagger
 
@@ -166,7 +167,7 @@ life much easier.
 
 #### Docker and docker-compose
 
-Since Java usually has tons of dependencies, making that a this server a container
+Since Java usually has tons of dependencies, making this server a container
 reduces loads of unknown variables. Docker is a great standard for building containers.
 
 docker-compose, was chosen as a quick and simple way to start 2 different containers in
@@ -176,8 +177,8 @@ simple enough for this simple case.
 ### Source code organization
 
 All source code, besides `Dockerfile`, `docker-compose.yaml` and `pom.xml` resides
-om `src` folder, which follows a DDD like structure. Real DDD structure felt much bloated
-for this simple case, but some separation is nice:
+on `src` folder, which follows a DDD-like structure. Real DDD structure felt much bloated
+for this simple case, but some inspiration was drawn:
 
 - `api` deals with classes that directly affects the API. Changes here could mean a `v2`
 - `domain` all logic and internal behaviour lives here.
@@ -187,11 +188,13 @@ This same structure can be found at `test` package.
 
 ### Testing strategy
 
+#### Unit tests
 Most classes has Unit tests to help speed up test/code cycles, even
 if they are somewhat redundant with Integration tests. The reasoning is
 that you can do few quick cycles to test some specific feature/bug, without
 having to start up the entire application.
 
+#### Integration tests
 Integration tests are done at 2 levels:
 - Repository: To test datasource integration. 
 - API: To test the application as a whole.
@@ -204,7 +207,7 @@ could be reevaluated if tests becomes a real burden.
 
 ## Improvements
 
-Some next steps:
+Some next steps in no particular order:
 - Use **testcontainers** for integration tests. At the moment integration tests requires
   a redis instance running at **localhost:6379**. 
 - Accepting file uploads and computing diffs asynchronously, that would make
