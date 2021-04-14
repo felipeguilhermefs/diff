@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 import static org.springframework.http.HttpStatus.ACCEPTED;
 
 @Tag(name = "Diff", description = "every diff endpoint")
@@ -27,7 +29,7 @@ public class DiffController {
                     """)
     @ResponseStatus(ACCEPTED)
     @PostMapping("/{id}/left")
-    public void saveLeft(@PathVariable String id, @RequestBody String data) {
+    public void saveLeft(@PathVariable UUID id, @RequestBody String data) {
         service.saveLeft(id, data);
     }
 
@@ -39,7 +41,7 @@ public class DiffController {
                     """)
     @ResponseStatus(ACCEPTED)
     @PostMapping(value = "/{id}/right")
-    public void saveRight(@PathVariable String id, @RequestBody String data) {
+    public void saveRight(@PathVariable UUID id, @RequestBody String data) {
         service.saveRight(id, data);
     }
 
@@ -50,7 +52,7 @@ public class DiffController {
                     and [right](#/Diff/saveRight) sides, and returns a side-by-side diff.
                     """)
     @GetMapping("/{id}")
-    public DiffResponse getDiff(@PathVariable String id) {
+    public DiffResponse getDiff(@PathVariable UUID id) {
         return service.getById(id);
     }
 }

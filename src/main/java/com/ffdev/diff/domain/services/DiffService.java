@@ -11,6 +11,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 import static com.ffdev.diff.domain.configs.CacheConfig.DIFF_CACHE;
 import static com.ffdev.diff.domain.enums.Side.LEFT;
 import static com.ffdev.diff.domain.enums.Side.RIGHT;
@@ -39,7 +41,7 @@ public class DiffService {
      * @param data diff left data, should be JSON base64 encoded, throws an error if it is not
      */
     @CacheEvict(value = DIFF_CACHE, key = "#id")
-    public void saveLeft(@NotNull String id, @NotNull String data) {
+    public void saveLeft(@NotNull UUID id, @NotNull String data) {
         save(LEFT, id, data);
     }
 
@@ -50,11 +52,11 @@ public class DiffService {
      * @param data diff right data, should be JSON base64 encoded, throws an error if it is not
      */
     @CacheEvict(value = DIFF_CACHE, key = "#id")
-    public void saveRight(@NotNull String id, @NotNull String data) {
+    public void saveRight(@NotNull UUID id, @NotNull String data) {
         save(RIGHT, id, data);
     }
 
-    private void save(Side side, String id, String data) {
+    private void save(Side side, UUID id, String data) {
         var decodedData = decodeB64(data);
 
         if (!isValidJSON(decodedData)) {
@@ -74,14 +76,14 @@ public class DiffService {
      * @param id diff id
      */
     @Cacheable(value = DIFF_CACHE, key = "#id")
-    public DiffResponse getById(@NotNull String id) {
+    public DiffResponse getById(@NotNull UUID id) {
         var left = getSideData(LEFT, id);
         var right = getSideData(RIGHT, id);
 
         return checkService.getDiff(left, right);
     }
 
-    private String getSideData(Side side, String id) {
+    private String getSideData(Side side, UUID id) {
         return sideRepository.fetchDataBySideAndDiffId(side, id)
                 .orElseThrow(() -> new DiffSideNotFoundException(side));
     }

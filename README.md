@@ -99,8 +99,8 @@ Some helper test files can be found at **test-files** dir.
 invalid.json  invalid_json.b64  normal.txt  normal_txt.b64  ok.json  ok_json.b64
 ```
 
-Also a web base64 encoder/decoder can be found [here](https://www.base64encode.org/). And a JSON
-formmater [here](https://jsonformatter.curiousconcept.com/).
+Also some web helpers: [Base64 Encoder/Decoder](https://www.base64encode.org/)
+, [JSON Formatter](https://jsonformatter.curiousconcept.com/), [UUID Generator](https://www.uuidgenerator.net/version4).
 
 ### API
 
@@ -112,7 +112,7 @@ There is only three endpoints:
 - **POST** - `/v1/diff/{id}/right`
 - **GET** - `/v1/diff/{id}`
 
-Where `{id}` is a user defined string (`UUID` recommended) that identifies a diff.
+Where `{id}` is a user defined `UUID` that identifies a diff.
 
 #### **POST** `/v1/diff/{id}/left`
 

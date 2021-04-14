@@ -13,6 +13,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.UUID;
+
 import static com.ffdev.diff.api.enums.DiffResult.*;
 import static com.ffdev.diff.api.enums.ErrorCode.*;
 import static com.ffdev.diff.shared.helpers.Base64Helper.encodeB64;
@@ -263,27 +265,27 @@ class DiffControllerIT extends AbstractRedisIT {
         }
     }
 
-    private <T> ResponseEntity<T> getDiff(String id, Class<T> clazz) {
+    private <T> ResponseEntity<T> getDiff(UUID id, Class<T> clazz) {
         var url = "http://localhost:" + port + "/v1/diff/{id}";
         return restTemplate.getForEntity(url, clazz, id);
     }
 
-    private HttpStatus postLeft(String id, String data) {
+    private HttpStatus postLeft(UUID id, String data) {
         return postLeft(id, data, String.class).getStatusCode();
     }
 
-    private <T> ResponseEntity<T> postLeft(String id, String data, Class<T> clazz) {
+    private <T> ResponseEntity<T> postLeft(UUID id, String data, Class<T> clazz) {
         var body = new HttpEntity<>(data);
         var url = "http://localhost:" + port + "/v1/diff/{id}/left";
 
         return restTemplate.postForEntity(url, body, clazz, id);
     }
 
-    private HttpStatus postRight(String id, String data) {
+    private HttpStatus postRight(UUID id, String data) {
         return postRight(id, data, String.class).getStatusCode();
     }
 
-    private <T> ResponseEntity<T> postRight(String id, String data, Class<T> clazz) {
+    private <T> ResponseEntity<T> postRight(UUID id, String data, Class<T> clazz) {
         var body = new HttpEntity<>(data);
         var url = "http://localhost:" + port + "/v1/diff/{id}/right";
 

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.ffdev.diff.api.enums.DiffResult.EQUAL;
 import static com.ffdev.diff.domain.enums.Side.LEFT;
@@ -165,7 +166,7 @@ class DiffServiceTest {
             assertEquals(expectedDiff, service.getById(testId));
         }
 
-        private void withDiffSides(String id, String left, String right) {
+        private void withDiffSides(UUID id, String left, String right) {
             when(sideRepository.fetchDataBySideAndDiffId(eq(LEFT), eq(id)))
                     .thenReturn(Optional.ofNullable(left));
 

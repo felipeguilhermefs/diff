@@ -1,6 +1,7 @@
 package com.ffdev.diff.shared.helpers;
 
 import java.util.Random;
+import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.random;
@@ -18,8 +19,8 @@ public class RandomHelper {
      *
      * @return random uuid string
      */
-    public static String uuid() {
-        return randomUUID().toString();
+    public static UUID uuid() {
+        return randomUUID();
     }
 
     /**

@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,14 +55,14 @@ public class DiffSideRepository {
      * @param side   which side
      * @param diffId which id
      */
-    public Optional<String> fetchDataBySideAndDiffId(@NotNull Side side, @NotNull String diffId) {
+    public Optional<String> fetchDataBySideAndDiffId(@NotNull Side side, @NotNull UUID diffId) {
         var key = getKey(diffId, side);
         var data = redisTemplate.opsForValue().get(key);
         return Optional.ofNullable(data);
     }
 
-    private String getKey(String id, Side side) {
-        // key format example: diff:some-id:left
+    private String getKey(UUID id, Side side) {
+        // key format example: diff:some-uuid:left
         return String.format("diff:%s:%s", id, side.getId());
     }
 }
