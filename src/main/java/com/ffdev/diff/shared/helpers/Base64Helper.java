@@ -1,6 +1,7 @@
 package com.ffdev.diff.shared.helpers;
 
 import com.ffdev.diff.domain.exceptions.InvalidBase64Exception;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Base64;
 
@@ -15,7 +16,7 @@ public class Base64Helper {
      * @param data decoded string
      * @return encoded data
      */
-    public static String encodeB64(String data) {
+    public static String encodeB64(@NotNull String data) {
         return Base64.getEncoder().encodeToString(data.getBytes());
     }
 
@@ -25,7 +26,7 @@ public class Base64Helper {
      * @param data encoded string
      * @return decoded data
      */
-    public static String decodeB64(String data) {
+    public static String decodeB64(@NotNull String data) {
         try {
             byte[] decoded = Base64.getDecoder().decode(data);
             return new String(decoded);

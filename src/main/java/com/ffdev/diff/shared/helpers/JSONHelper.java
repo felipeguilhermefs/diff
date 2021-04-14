@@ -2,6 +2,7 @@ package com.ffdev.diff.shared.helpers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * {@link JSONHelper} static JSON helper methods
@@ -17,7 +18,7 @@ public class JSONHelper {
      * @param data string to be checked
      * @return (boolean) valid or not
      */
-    public static boolean isValidJSON(String data) {
+    public static boolean isValidJSON(@NotNull String data) {
         try {
             jsonMapper.readTree(data);
             return true;
