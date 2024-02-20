@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI openAPI(
+    OpenAPI openAPI(
             @Value("${app.description}") String description,
             @Value("${app.version}") String version,
             @Value("${app.source.url}") String sourceURL

@@ -24,7 +24,7 @@ public class CacheConfig {
     public static final String DIFF_CACHE = "diff";
 
     @Bean
-    public RedisCacheManager cacheManager(
+    RedisCacheManager cacheManager(
             RedisConnectionFactory connFactory,
             @Value("${diff.cache.ttl-minutes}") long timeToLive
     ) {
