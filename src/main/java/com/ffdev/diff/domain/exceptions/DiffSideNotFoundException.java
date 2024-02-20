@@ -11,7 +11,7 @@ public class DiffSideNotFoundException extends ApplicationKnownException {
     private final Side side;
 
     public DiffSideNotFoundException(@NotNull Side side) {
-        super(String.format("Diff %s side was not found", side.getId()));
+        super("Diff %s side was not found".formatted(side.getId()));
         this.side = side;
     }
 

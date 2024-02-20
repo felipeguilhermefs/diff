@@ -63,6 +63,6 @@ public class DiffSideRepository {
 
     private String getKey(UUID id, Side side) {
         // key format example: diff:some-uuid:left
-        return String.format("diff:%s:%s", id, side.getId());
+        return "diff:%s:%s".formatted(id, side.getId());
     }
 }
