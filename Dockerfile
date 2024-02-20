@@ -1,4 +1,4 @@
-FROM maven:3.8-openjdk-16 AS MAVEN_BUILD
+FROM maven:3.8-openjdk-17 AS MAVEN_BUILD
 
 MAINTAINER Felipe Flores (felipeguilhermefs@gmail.com)
 
@@ -12,7 +12,7 @@ COPY src /build/src/
 WORKDIR /build/
 RUN mvn clean package
 
-FROM openjdk:16-alpine
+FROM openjdk:17-alpine
 
 WORKDIR /app
 

@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.4</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.2.2</version>
+        <relativePath/>
     </parent>
+
     <groupId>com.ffdev</groupId>
     <artifactId>diff</artifactId>
     <version>1.0.0</version>
     <name>diff</name>
     <description>APIs to verify side-by-side diffs</description>
+
     <properties>
-        <java.version>16</java.version>
-        <jetbrains.annotations.version>20.1.0</jetbrains.annotations.version>
-        <springdoc.version>1.5.7</springdoc.version>
+        <java.version>17</java.version>
+        <jetbrains.annotations.version>24.1.0</jetbrains.annotations.version>
+        <openapi.version>2.3.0</openapi.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -43,8 +48,8 @@
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc.version}</version>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${openapi.version}</version>
         </dependency>
 
         <dependency>

@@ -18,7 +18,7 @@ APIs to verify side-by-side diffs of base64 encoded JSON.
 Using **docker-compose** is the easiest and more straightforward way to get this server up, as it would be the only
 dependency.
 
-If you don't want to use **docker-compose** you'll need Java 16 installed and Redis 6.2 running locally.
+If you don't want to use **docker-compose** you'll need Java 17 installed and Redis 6.2 running locally.
 
 Both methods are described bellow, and both will need you to clone this repo.
 
@@ -44,11 +44,11 @@ After you have **docker-compose** available it is just build and run:
 
 ### Without docker-compose
 
-#### JDK 16
+#### JDK 17
 
 Official instructions [here](https://openjdk.java.net/install/).
 
-After JDK 16 is available you can use the maven wrapper to build.
+After JDK 17 is available you can use the maven wrapper to build.
 
 ```sh
 # Can take a couple of minutes pulling maven dependencies

@@ -8,9 +8,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
@@ -270,7 +271,7 @@ class DiffControllerIT extends AbstractRedisIT {
         return restTemplate.getForEntity(url, clazz, id);
     }
 
-    private HttpStatus postLeft(UUID id, String data) {
+    private HttpStatusCode postLeft(UUID id, String data) {
         return postLeft(id, data, String.class).getStatusCode();
     }
 
@@ -281,7 +282,7 @@ class DiffControllerIT extends AbstractRedisIT {
         return restTemplate.postForEntity(url, body, clazz, id);
     }
 
-    private HttpStatus postRight(UUID id, String data) {
+    private HttpStatusCode postRight(UUID id, String data) {
         return postRight(id, data, String.class).getStatusCode();
     }
 
