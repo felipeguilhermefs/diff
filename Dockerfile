@@ -1,4 +1,4 @@
-FROM maven:3.8-openjdk-17 AS MAVEN_BUILD
+FROM maven:3.9.6-eclipse-temurin-21 AS MAVEN_BUILD
 
 MAINTAINER Felipe Flores (felipeguilhermefs@gmail.com)
 
@@ -12,12 +12,11 @@ COPY src /build/src/
 WORKDIR /build/
 RUN mvn clean package
 
-FROM openjdk:17-alpine
-
+FROM eclipse-temurin:21.0.2_13-jre
 WORKDIR /app
 
 #To reduce image size we just a JRE and .jar file
-COPY --from=MAVEN_BUILD /build/target/diff-1.0.0.jar /app/
+COPY --from=MAVEN_BUILD /build/target/diff.jar /app/
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "diff-1.0.0.jar"]
+ENTRYPOINT ["java", "-jar", "diff.jar"]
