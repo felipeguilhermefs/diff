@@ -1,0 +1,22 @@
+## general app info ##
+app:
+  version: @project.version@
+  description: @project.description@
+  source.url: https://github.com/felipeguilhermefs/diff
+
+## redis ##
+# using jedis for it is synchronous, could use lettuce if web-flux were the case
+spring.data.redis:
+  client-type: jedis
+  host: localhost
+  port: 6379
+
+spring.threads.virtual.enabled: true
+
+## open api ##
+# springdoc default is not json for some reason, spring is (go figure)
+springdoc.default-produces-media-type: application/json
+
+## cache ##
+# 10 minutes should be enough for a diff use case
+diff.cache.ttl-minutes: 10

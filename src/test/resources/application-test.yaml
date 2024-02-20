@@ -1,12 +1,13 @@
 ## redis ##
 # using jedis for it is synchronous, could use lettuce if web-flux were the case
-spring.data.redis.client-type=jedis
-spring.data.redis.host=localhost
-spring.data.redis.port=6379
+spring.data.redis:
+  client-type: jedis
+  host: localhost
+  port: 6379
 # using different database so tests does not mess with running data
 # shouldn't be needed if different instances are used
-spring.data.redis.database=1
+spring.data.redis.database: 1
 
 ## cache ##
 # 2 minutes is more than enough for tests
-diff.cache.ttl-minutes=2
+diff.cache.ttl-minutes: 2
