@@ -6,6 +6,9 @@ app:
 
 spring.threads.virtual.enabled: true
 
+
+spring.docker.compose.file: compose-local.yaml
+
 ## open api ##
 # springdoc default is not json for some reason, spring is (go figure)
 springdoc.default-produces-media-type: application/json
