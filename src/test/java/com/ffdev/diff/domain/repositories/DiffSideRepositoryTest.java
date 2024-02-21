@@ -11,7 +11,9 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -20,16 +22,19 @@ import static com.ffdev.diff.domain.enums.Side.LEFT;
 import static com.ffdev.diff.domain.enums.Side.RIGHT;
 import static com.ffdev.diff.shared.helpers.RandomHelper.uuid;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
- * {@link DiffSideRepositoryIT} guarantees that data is stored and retrieved from repository as we want.
+ * {@link DiffSideRepositoryTest} guarantees that data is stored and retrieved from repository as we want.
  *
  * <p>A real redis instance is used, and should be available to this integration test.
  *
  * <p>Using a solution like "testcontainers" would remove the need of a redis instance running locally.
  */
 @DisplayName("Diff Side Repository")
-class DiffSideRepositoryIT extends AbstractRedisIT {
+@SpringBootTest(webEnvironment = RANDOM_PORT)
+@ActiveProfiles("test")
+class DiffSideRepositoryTest extends AbstractRedisIT {
 
     @Value("${diff.cache.ttl-minutes}")
     private long timeToLive;

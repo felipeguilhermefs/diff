@@ -3,16 +3,18 @@ package com.ffdev.diff.api.controllers;
 import com.ffdev.diff.api.dtos.DiffResponse;
 import com.ffdev.diff.api.dtos.ErrorResponse;
 import com.ffdev.diff.shared.AbstractRedisIT;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
 
@@ -21,10 +23,11 @@ import static com.ffdev.diff.api.enums.ErrorCode.*;
 import static com.ffdev.diff.shared.helpers.Base64Helper.encodeB64;
 import static com.ffdev.diff.shared.helpers.RandomHelper.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.*;
 
 /**
- * {@link DiffControllerIT} Integration tests the functionality as whole. So no mocks are used and the server is
+ * {@link DiffControllerTest} Integration tests the functionality as whole. So no mocks are used and the server is
  * started at a random port.
  *
  * <p>A real redis instance is used, and should be available to this integration test.
@@ -32,13 +35,26 @@ import static org.springframework.http.HttpStatus.*;
  * <p>Using a solution like "testcontainers" would remove the need of a redis instance running locally.
  */
 @DisplayName("Diff API")
-class DiffControllerIT extends AbstractRedisIT {
-
-    @LocalServerPort
-    private int port;
+@SpringBootTest(webEnvironment = RANDOM_PORT)
+@ActiveProfiles("test")
+class DiffControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    /**
+     * Cleanup all keys after a test is run
+     */
+    @AfterEach
+    public void cleanup() {
+        var allKeys = redisTemplate.keys("*");
+        if (allKeys != null) {
+            redisTemplate.delete(allKeys);
+        }
+    }
 
     @Nested
     @DisplayName("when posting should error")
@@ -267,8 +283,7 @@ class DiffControllerIT extends AbstractRedisIT {
     }
 
     private <T> ResponseEntity<T> getDiff(UUID id, Class<T> clazz) {
-        var url = "http://localhost:" + port + "/v1/diff/{id}";
-        return restTemplate.getForEntity(url, clazz, id);
+        return restTemplate.getForEntity("/v1/diff/{id}", clazz, id);
     }
 
     private HttpStatusCode postLeft(UUID id, String data) {
@@ -277,9 +292,7 @@ class DiffControllerIT extends AbstractRedisIT {
 
     private <T> ResponseEntity<T> postLeft(UUID id, String data, Class<T> clazz) {
         var body = new HttpEntity<>(data);
-        var url = "http://localhost:" + port + "/v1/diff/{id}/left";
-
-        return restTemplate.postForEntity(url, body, clazz, id);
+        return restTemplate.postForEntity("/v1/diff/{id}/left", body, clazz, id);
     }
 
     private HttpStatusCode postRight(UUID id, String data) {
@@ -288,8 +301,6 @@ class DiffControllerIT extends AbstractRedisIT {
 
     private <T> ResponseEntity<T> postRight(UUID id, String data, Class<T> clazz) {
         var body = new HttpEntity<>(data);
-        var url = "http://localhost:" + port + "/v1/diff/{id}/right";
-
-        return restTemplate.postForEntity(url, body, clazz, id);
+        return restTemplate.postForEntity("/v1/diff/{id}/right", body, clazz, id);
     }
 }

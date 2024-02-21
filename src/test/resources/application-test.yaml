@@ -1,12 +1,5 @@
-## redis ##
-# using jedis for it is synchronous, could use lettuce if web-flux were the case
-spring.data.redis:
-  client-type: jedis
-  host: localhost
-  port: 6379
-# using different database so tests does not mess with running data
-# shouldn't be needed if different instances are used
-spring.data.redis.database: 1
+spring.docker.compose:
+  skip.in-tests: false
 
 ## cache ##
 # 2 minutes is more than enough for tests
