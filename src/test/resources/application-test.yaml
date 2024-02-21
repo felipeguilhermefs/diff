@@ -1,6 +1,5 @@
 spring.docker.compose:
   skip.in-tests: false
-  file: compose-test.yaml
 
 ## cache ##
 # 2 minutes is more than enough for tests
