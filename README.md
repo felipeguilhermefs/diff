@@ -15,71 +15,24 @@ APIs to verify side-by-side diffs of base64 encoded JSON.
 
 ## Running the server
 
-Using **docker-compose** is the easiest and more straightforward way to get this server up, as it would be the only
-dependency.
-
-If you don't want to use **docker-compose** you'll need Java 17 installed and Redis 6.2 running locally.
-
-Both methods are described bellow, and both will need you to clone this repo.
+You'll need Java 21 and Docker installed, and this repository cloned.
 
 ```sh
 ~: git clone git@github.com:felipeguilhermefs/diff.git
 ~: cd diff
 ```
 
-### With docker-compose (recommended)
+### Build
 
-If you don't have **docker-compose** you can find official installation
-instructions [here](https://docs.docker.com/compose/install/).
-
-After you have **docker-compose** available it is just build and run:
-
-```sh
-# Can take a couple of minutes pulling maven dependencies
-~/diff: docker-compose build
-# After the build start up or shut down should be fast
-~/diff: docker-compose up
-~/diff: docker-compose down
-```
-
-### Without docker-compose
-
-#### JDK 17
-
-Official instructions [here](https://openjdk.java.net/install/).
-
-After JDK 17 is available you can use the maven wrapper to build.
+Maven is included in this repo, which makes it easier to just package the .jar:
 
 ```sh
 # Can take a couple of minutes pulling maven dependencies
 ~/diff: ./mvnw clean package
+# After the build is done just run the .jar
+# Spring Boot will read the compose.yaml file and startup the local environment
+~/diff: java -jar target/diff.jar
 ```
-
-#### Redis 6.2
-
-Download available [here](https://redis.io/download).
-
-Or use docker to pull a redis image:
-
-```sh
-~/diff: docker run --name redis -p 6379:6379 -d redis:6.2-alpine
-```
-
-The server will connect to redis default port: **6379**
-
-#### Running
-
-Make sure your Redis instance is up and running.
-
-Now just run .jar built in target dir.
-
-```sh
-~/diff: cd target
-~/diff/target: java -jar diff-1.0.0.jar
-```
-
-Server should start at port: **8080**
-
 ---
 
 ## Testing the API
@@ -169,7 +122,7 @@ Redis is really fast and reliable, and given a transient nature of a diff applic
 
 In this project it is used as a transient datasource and for distributed caching, meaning that we could have multiple
 instances of this server, and they would share a cache, which makes horizontal scaling easier. Also, Redis can be
-clustered if needed. Some tweaks in **docker-compose.yaml** would be needed to make this possible.
+clustered if needed.
 
 #### OpenAPI and Swagger
 
