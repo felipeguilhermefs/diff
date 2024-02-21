@@ -1,7 +1,7 @@
 package com.ffdev.diff.domain.repositories;
 
 import com.ffdev.diff.domain.entities.DiffSide;
-import com.ffdev.diff.shared.AbstractRedisIT;
+import com.ffdev.diff.shared.AbstractRedisTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -11,9 +11,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -22,7 +20,6 @@ import static com.ffdev.diff.domain.enums.Side.LEFT;
 import static com.ffdev.diff.domain.enums.Side.RIGHT;
 import static com.ffdev.diff.shared.helpers.RandomHelper.uuid;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
  * {@link DiffSideRepositoryTest} guarantees that data is stored and retrieved from repository as we want.
@@ -32,9 +29,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  * <p>Using a solution like "testcontainers" would remove the need of a redis instance running locally.
  */
 @DisplayName("Diff Side Repository")
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@ActiveProfiles("test")
-class DiffSideRepositoryTest extends AbstractRedisIT {
+class DiffSideRepositoryTest extends AbstractRedisTest {
 
     @Value("${diff.cache.ttl-minutes}")
     private long timeToLive;

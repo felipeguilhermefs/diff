@@ -2,19 +2,15 @@ package com.ffdev.diff.api.controllers;
 
 import com.ffdev.diff.api.dtos.DiffResponse;
 import com.ffdev.diff.api.dtos.ErrorResponse;
-import com.ffdev.diff.shared.AbstractRedisIT;
-import org.junit.jupiter.api.AfterEach;
+import com.ffdev.diff.shared.AbstractRedisTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
 
@@ -23,7 +19,6 @@ import static com.ffdev.diff.api.enums.ErrorCode.*;
 import static com.ffdev.diff.shared.helpers.Base64Helper.encodeB64;
 import static com.ffdev.diff.shared.helpers.RandomHelper.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.*;
 
 /**
@@ -35,26 +30,10 @@ import static org.springframework.http.HttpStatus.*;
  * <p>Using a solution like "testcontainers" would remove the need of a redis instance running locally.
  */
 @DisplayName("Diff API")
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@ActiveProfiles("test")
-class DiffControllerTest {
+class DiffControllerTest extends AbstractRedisTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
-    /**
-     * Cleanup all keys after a test is run
-     */
-    @AfterEach
-    public void cleanup() {
-        var allKeys = redisTemplate.keys("*");
-        if (allKeys != null) {
-            redisTemplate.delete(allKeys);
-        }
-    }
 
     @Nested
     @DisplayName("when posting should error")
